@@ -206,7 +206,7 @@ public class DataEvents
     {
         using (MailMessage mailMessage = new MailMessage())
         {
-            mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["UserName"]);
+            mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["UserName"],"פורמה-קלאב");
             mailMessage.Subject = subject;
             mailMessage.Body = body;
             mailMessage.IsBodyHtml = true;
