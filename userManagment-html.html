@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>פורמה פיט - ניהול</title>
+    <meta http-equiv="content-type" content="text/html" charset="utf-8" dir="rtl" />
+    <meta name="viewport" content="width=device-width, inital-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <script src="style/css/5grid/viewport.js"></script>
+    <!--[if lt IE 9]><script src="css/5grid/ie.js"></script><![endif]-->
+    <link rel="stylesheet" href="style/css/5grid/core.css" />
+    <link rel="stylesheet" href="style/css/style.css" />
+    <!--[if IE 9]><link rel="stylesheet" href="css/style-ie9.css" /><![endif]-->
+    <!---------------------------------------CSS--------------------------------------------->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />      <!--BootStrap-->
+    <!--<link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/dataTables.bootstrap.min.css" />-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.11/css/jquery.dataTables.min.css" />           <!--dataTables-->
+    <!----------------------------------------------------------------------------------------------------->
+    <!--------------------------------------------jquery scripts------------------------------------------------->
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>                                        <!--dataTables-->
+    <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>                      <!--dataTables-->
+    <!--<script src="https://cdn.datatables.net/1.10.11/js/dataTables.bootstrap.min.js"></script>-->
+    <!--<script src="https://cdn.datatables.net/plug-ins/1.10.11/i18n/Hebrew.json"></script>-->                 <!--dataTables-->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>                  <!--BootStrap-->
+    <!----------------------------------------------------------------------------------------------------->
+    <!---------------------------------------My style + script-------------------------------------------------------->
+    <script src="script/userManagmentScript.js"></script>
+    <!--<script src="script/ajaxCalls.js"></script>-->
+    <link href="style/StyleSheet.css" rel="stylesheet" />
+    <!----------------------------------------------------------------------------------------------------->
+
+
+</head>
+<body dir="rtl">
+    <div id="header-wrapper">
+        <div class="5grid">
+            <div class="12u-first">
+                <header id="header">
+                    <nav>
+                        <a href="Admin-Main.html">דף בית</a>
+                        <a href="userManagment-html.html" class="current-page-item">ניהול משתמשים</a>
+                        <a href="classManagment-Main.html">ניהול חוגים</a>
+                        <a href="ProgramManagment-Main.aspx">ניהול תכנית אימונים</a>
+                        <a href="notificationManagment.html">הודעות ושינויים</a>
+                    </nav>
+                </header>
+            </div>
+        </div>
+    </div>
+    <div id="banner-wrapper">
+        <div class="5grid">
+            <div class="12u-first">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addUserModal"><span class="glyphicon glyphicon-plus"></span>&nbsp;הוספת משתמש חדש</button>
+                <div style="float:left">
+                    <input id="idToRemove" placeholder="תעודת זהות להסרה" />
+                    <button id="removeBT" class="btn btn-danger glyphicon glyphicon-trash"></button>
+                </div>
+                <br /><br />
+            </div>
+            <div>
+                <table id="UserTable" class="table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="text-right">שם פרטי</th>
+                            <th class="text-right">שם משפחה</th>
+                            <th class="text-right">שם משתמש</th>
+                            <th class="text-right">סיסמא</th>
+                            <th class="text-right">סוג משתמש</th>
+                            <th class="text-right">סטטוס</th>
+                            <th class="text-right">תאריך לידה</th>
+                            <th class="text-right">תאריך הרשמה</th>
+                            <th class="text-right">תאריך סיום</th>
+                            <th class="text-right">נייד</th>
+                            <th class="text-right">דוא''ל</th>
+                            <th class="text-right">עריכה</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="footer-wrapper">
+        <div class="5grid">
+            <div class="12u-first">
+                <div id="copyright">
+                    &copy; 2016 איתן, עוז וחזי
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--modal for adding new user-->
+    <div class="modal fade" id="addUserModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">הוספת משתמש</h4>
+                </div>
+                <form class="modal-body">
+                    <input id="FirstName" placeholder="שם פרטי" class="form-control form-group" />
+                    <input id="LastName" placeholder="שם משפחה" class="form-control form-group" />
+                    <input id="UserName" placeholder="תעודת זהות" class="form-control form-group" required />
+                    <input id="Password" placeholder="סיסמא" class="form-control form-group" />
+                    <select id="typeDDL" class="form-control form-group">
+                        <option value="משתמש">מתאמן</option>
+                        <option value="מנהל">מנהל</option>
+
+                    </select>
+                    <select id="statusDDL" class="form-control form-group">
+                        <option value="פעיל">פעיל</option>
+                        <option value="לא פעיל">לא פעיל</option>
+                    </select>
+                    תאריך לידה:<input type="date" class="form-control" id="DOB" placeholder="תאריך לידה" /><br />
+                    תאריך הרשמה<input type="date" class="form-control" id="BeginDate" placeholder="תאריך התחלה" /><br />
+                    תאריך סיום<input type="date" class="form-control" id="EndDate" placeholder="תאריך סיום" /><br />
+                    <input id="Mobile" class="form-control form-group" placeholder="נייד">
+                    <input id="Email" type="email" class="form-control form-group" placeholder="דוא''ל">
+                    <div class="modal-footer">
+                        <button type="submit" id="AddUser" class="btn btn-info" data-toggle="modal">הוסף</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--End of Modal-->
+    
+
+    <!--modal for editing status parameter in table-->
+    <div class="modal fade" id="editUserStatusModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">עריכת סטטוס</h4>
+                </div>
+                <form class="modal-body">
+                    <select id="EditUserStatusField">
+                        <option value="פעיל">פעיל</option>
+                        <option value="לא פעיל">לא פעיל</option>
+                    </select>
+                    <div class="modal-footer">
+                        <button type="submit" id="EditUserStatusModalBTN" class="btn btn-info" data-toggle="modal">ערוך</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!--modal for editing type parameter in table-->
+    <div class="modal fade" id="editUserTypeModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">עריכת סוג משתמש</h4>
+                </div>
+                <form class="modal-body">
+                    <select id="EditUserTypeField">
+                        <option value="משתמש">משתמש</option>
+                        <option value="מנהל">מנהל</option>
+                    </select>
+                    <div class="modal-footer">
+                        <button type="submit" id="EditUserTypeModalBTN" class="btn btn-info" data-toggle="modal">ערוך</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!--modal for editing parameter in table-->
+    <div class="modal fade" id="editUserModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">עריכת ערך</h4>
+                </div>
+                <form class="modal-body">
+                    <input id="EditUserField" placeholder="" class="form-control form-group" />
+                    <div class="modal-footer">
+                        <button type="submit" id="EditUserModalBTN" class="btn btn-info" data-toggle="modal">ערוך</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
