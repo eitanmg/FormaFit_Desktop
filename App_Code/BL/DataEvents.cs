@@ -9,6 +9,8 @@ using System.IO;
 using System.Configuration;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
+using System.Threading;
 
 /// <summary>
 /// Summary description for Events
@@ -41,17 +43,8 @@ public class DataEvents
         DBServices RegisteredUsersTBL = dbs.whoIsRegisteredToThisClass("FormaFitConnectionString", id);
         if (RegisteredUsersTBL.dt.Rows.Count > 0)
         {
-            string emailSubject = Date + " בתאריך " + className + " פורמה-פיט - שינוי מועד חוג ";
-            string recepientEmail = "";
-            string recepientName  = "";
-            foreach (DataRow row in RegisteredUsersTBL.dt.Rows)
-            {
-                recepientEmail = row["EmailAaddress"].ToString();
-                recepientName =  row["FirstName"].ToString();
-                string builedEmailBody = PopulateBody(recepientName, className, guideName, Date, startTime, endTime, oldEndTime);
-                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
-                return answer;
-            }
+            Mailer mailer = new Mailer();
+            mailer.getMailDataForEventResize(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime);
         }
         return answer;
     }
@@ -181,47 +174,6 @@ public class DataEvents
             HttpContext.Current.Session["UserDataSet"] = dbs;
         }
         return dbs.dt;
-    }
-
-    private string PopulateBody(string recepientName, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime)
-    {
-        string body = string.Empty;
-        using (StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_change_temp.html")))
-        {
-            body = reader.ReadToEnd();
-        }
-        body = body.Replace("{FirstName}", recepientName);
-        body = body.Replace("{ClassName}", className);
-        body = body.Replace("{GuideName}", guideName);
-        body = body.Replace("{oldClassDate}", Date);
-        body = body.Replace("{oldClassStartTime}", startTime);
-        body = body.Replace("{oldClassEndTime}", oldEndTime);
-        body = body.Replace("{newClassDate}", Date);
-        body = body.Replace("{newClassStartTime}", startTime);
-        body = body.Replace("{newClassEndTime}", endTime);
-        return body;
-    }
-
-    private void SendHtmlFormattedEmail(string recepientEmail, string subject, string body)
-    {
-        using (MailMessage mailMessage = new MailMessage())
-        {
-            mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["UserName"],"פורמה-קלאב");
-            mailMessage.Subject = subject;
-            mailMessage.Body = body;
-            mailMessage.IsBodyHtml = true;
-            mailMessage.To.Add(new MailAddress(recepientEmail));
-            SmtpClient smtp = new SmtpClient();
-            smtp.Host = ConfigurationManager.AppSettings["Host"];
-            smtp.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["EnableSsl"]);
-            System.Net.NetworkCredential NetworkCred = new System.Net.NetworkCredential();
-            NetworkCred.UserName = ConfigurationManager.AppSettings["UserName"];
-            NetworkCred.Password = ConfigurationManager.AppSettings["Password"];
-            smtp.UseDefaultCredentials = true;
-            smtp.Credentials = NetworkCred;
-            smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
-            smtp.Send(mailMessage);
-        }
     }
 }
 
