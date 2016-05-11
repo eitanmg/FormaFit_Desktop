@@ -165,16 +165,16 @@ public class DataEvents
 
             if (RegisteredUsersTBL.dt.Rows.Count > 0)
             {
-                Task myTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditInDatabase(RegisteredUsersTBL, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, eventEndTimeInitial, whatHasChangedParsed, eventDate));
+                Task myTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditInDatabase(RegisteredUsersTBL, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, classStartTime, eventEndTimeInitial, classEndTime, whatHasChangedParsed, eventDate));
             }
         }
         return answer;
     }
 
-    private void AsyncUpdateEventsAfterEditInDatabase(DBServices RegisteredUsersTBL, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string eventEndTimeInitial, string whatHasChangedParsed, string eventDate)
+    private void AsyncUpdateEventsAfterEditInDatabase(DBServices RegisteredUsersTBL, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string classStartTime, string eventEndTimeInitial, string classEndTime, string whatHasChangedParsed, string eventDate)
     {
         Mailer mailer = new Mailer();
-        mailer.getMailDataForEventEdit(RegisteredUsersTBL, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, eventEndTimeInitial, whatHasChangedParsed, eventDate);
+        mailer.getMailDataForEventEdit(RegisteredUsersTBL, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, classStartTime, eventEndTimeInitial, classEndTime, whatHasChangedParsed, eventDate);
     }
 
     public string createNewClassInDB(string className)

@@ -313,6 +313,7 @@
                             {
                                 whatHasChangedParsed += WhatHasChanged[i] + ";";
                             }
+                            var whatHasChangedParsed = whatHasChangedParsed.substring(0, whatHasChangedParsed.length - 1);
 
                             var updateRequest =
                                 {
