@@ -38,16 +38,24 @@ public class DataEvents
 
     public string UpdateEventsAfterEdit(string id, string Date, string endTime, string guideName, string className, string startTime, string oldEndTime)
     {
+
         DBServices dbs = new DBServices();
         string answer = dbs.UpdateEventsAfterEditInDatabase("FormaFitConnectionString", "FormaClasses", id, Date, endTime);
         DBServices RegisteredUsersTBL = dbs.whoIsRegisteredToThisClass("FormaFitConnectionString", id);
+
         if (RegisteredUsersTBL.dt.Rows.Count > 0)
         {
-            Mailer mailer = new Mailer();
-            mailer.getMailDataForEventResize(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime);
+            Task myFirstTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditInDatabase(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime));
         }
         return answer;
     }
+
+    private void AsyncUpdateEventsAfterEditInDatabase(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime)
+    {
+        Mailer mailer = new Mailer();
+        mailer.getMailDataForEventResize(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime);
+    }
+
 
     public string UpdateEventsAfterEditInDBbyDragging(string id, string Date, string startTime, string endTime)
     {

@@ -21,26 +21,36 @@ public class Mailer
 		// TODO: Add constructor logic here
 		//
 	}
+
+    //----------------------------------------------------ResizeMailer---------------------------------------------------
+
     public void getMailDataForEventResize(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime) 
     {
 
-        string emailSubject = "פורמה-פיט - שינוי מועד חוג " + className + " בתאריך " + Date;
+        string emailSubject = "פורמה-פיט - שינוי שעת חוג " + className + " בתאריך " + Date;
         foreach (DataRow row in RegisteredUsersTBL.dt.Rows)
         {
             string recepientEmail = row["EmailAaddress"].ToString();
             string recepientName = row["FirstName"].ToString();
-            string builedEmailBody = PopulateBodyForEventResize(recepientName, className, guideName, Date, startTime, endTime, oldEndTime);
-            SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody);
+            if (recepientEmail != null && recepientEmail != "")
+            {
+                string builedEmailBody = PopulateBodyForEventResize(recepientName, className, guideName, Date, startTime, endTime, oldEndTime);
+                SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody); 
+            }
         }
     }
 
     public string PopulateBodyForEventResize(string recepientName, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime)
     {
         string body = string.Empty;
-        using (StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_change_temp.html")))
-        {
-            body = reader.ReadToEnd();
-        }
+        //using (StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_change_temp.html")))
+        //{
+        //    body = reader.ReadToEnd();
+        //}
+    //    StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_change_temp.html"));
+        string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_change_resize_temp.html");
+        StreamReader reader = new StreamReader(path);
+        body = reader.ReadToEnd();
         body = body.Replace("{FirstName}", recepientName);
         body = body.Replace("{ClassName}", className);
         body = body.Replace("{GuideName}", guideName);
@@ -52,6 +62,9 @@ public class Mailer
         body = body.Replace("{newClassEndTime}", endTime);
         return body;
     }
+
+    //----------------------------------------------------end of ResizeMailer---------------------------------------------------
+
 
     public void SendHtmlFormattedEmailForEventResize(string recepientEmail, string subject, string body)
     {
