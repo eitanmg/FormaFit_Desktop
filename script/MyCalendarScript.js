@@ -83,6 +83,9 @@
             eventDrop: function (event, delta, revertFunc) {
                 startTimeAndDate = event.start.format().split('T');
                 endTimeAndDate = event.end.format().split('T');
+                var OldDate = event.start._i.split('T')[0];
+                var guideName = event.title.split(' - ')[1];
+                var className = event.title.split(' - ')[0];
                 if (!confirm("להזיז את חוג " + event.title + " לתאריך " + startTimeAndDate[0] + " שיתחיל בשעה " + startTimeAndDate[1] + " ויסתיים בשעה " + endTimeAndDate[1] + "?")) {
                     revertFunc();
                 }
@@ -91,7 +94,10 @@
                         id: event.id,
                         Date: startTimeAndDate[0],
                         startTime: startTimeAndDate[1],
-                        endTime: endTimeAndDate[1]
+                        endTime: endTimeAndDate[1],
+                        OldDate: OldDate,
+                        guideName: guideName,
+                        className: className
                     }
                     var dataString = JSON.stringify(request); // parsing the request above. 
                     $.ajax({
@@ -189,6 +195,18 @@
                             $('#MaximumUsersPerClassEdit').val(result[0].MaximumRegistered);
                         }
                 });
+
+
+                //initial values
+                classNameInitial = onlyClassNameToShowOnDDL.trim();
+                guideNameInitial = onlyGuideNameToShowOnDDL.trim();
+                eventStartTimeInitial = eventStartTimeAndDateObj[1];
+                eventEndTimeInitial = eventEndTimeAndDateObj[1];
+
+                eventDate = eventStartTimeAndDateObj[0];
+
+
+
                 $('#EditEventHeader').text(" עריכת חוג " + calEvent.title + " בתאריך " + eventStartTimeAndDateObj[0] + " המתחיל בשעה " + eventStartTimeAndDateObj[1]);
                 // $("#deleteEventfromEditModal").click(function () {
                 $("#deleteEventfromEditModal").unbind("click").click(function () {
@@ -227,6 +245,36 @@
                     var classEndTime = $('#classEndTimeEdit').val();
                     var newMaximumUsersPerClassEdit = $('#MaximumUsersPerClassEdit').val();
 
+                    var classNameText = $("#ClassesDDLEdit option:selected").text().trim();
+                    var guideNameText = $("#GuidesDDLEdit option:selected").text().trim();
+
+                    var NeedToSendEmail = "";
+                    var WhatHasChanged = [];
+                    if (classNameText != classNameInitial || guideNameText != guideNameInitial || classStartTime != eventStartTimeInitial || classEndTime != eventEndTimeInitial)
+                    {
+                        NeedToSendEmail = "Yes";
+                        if (classNameText != classNameInitial)
+                        {
+                            WhatHasChanged.push("className");
+                        }
+                        if (guideNameText != guideNameInitial)
+                        {
+                            WhatHasChanged.push("guideName");
+                        }
+                        if (classStartTime != eventStartTimeInitial)
+                        {
+                            WhatHasChanged.push("classStartTime");
+                        }
+                        if (classEndTime != eventEndTimeInitial)
+                        {
+                            WhatHasChanged.push("classEndTime");
+                        }
+                    }
+                    else
+                    {
+                        NeedToSendEmail = "No";
+                    }
+
                     var stt = new Date("November 13, 2013 " + classStartTime); // create a datetime stamp that will allow to validate more easily...
                     stt = stt.getTime();
 
@@ -259,14 +307,31 @@
                     }
                     else {
 
-                        var updateRequest = {
-                            classID: classID,
-                            className: className,
-                            guideID: guideID,
-                            classStartTime: classStartTime,
-                            classEndTime: classEndTime,
-                            newMaximumUsersPerClassEdit: newMaximumUsersPerClassEdit
-                        };
+                            var whatHasChangedParsed = "";
+
+                            for (var i = 0; i < WhatHasChanged.length; i++)
+                            {
+                                whatHasChangedParsed += WhatHasChanged[i] + ";";
+                            }
+
+                            var updateRequest =
+                                {
+                                classID: classID,
+                                className: className,
+                                guideID: guideID,
+                                classStartTime: classStartTime,
+                                classEndTime: classEndTime,
+                                newMaximumUsersPerClassEdit: newMaximumUsersPerClassEdit,
+                                NeedToSendEmail: NeedToSendEmail,
+                                classNameInitial: classNameInitial,
+                                classNameText: classNameText,
+                                guideNameInitial: guideNameInitial,
+                                guideNameText: guideNameText,
+                                eventStartTimeInitial: eventStartTimeInitial,
+                                eventEndTimeInitial: eventEndTimeInitial,
+                                whatHasChangedParsed: whatHasChangedParsed,
+                                eventDate: eventDate
+                                };
 
                         var dataString = JSON.stringify(updateRequest); // parsing the request above. 
                         $.ajax({

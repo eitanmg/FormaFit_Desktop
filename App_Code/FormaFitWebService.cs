@@ -120,11 +120,11 @@ public class FormaFitWebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string UpdateEventsAfterEditInDBbyDragging(string id, string Date, string startTime, string endTime)
+    public string UpdateEventsAfterEditInDBbyDragging(string id, string Date, string startTime, string endTime, string OldDate, string guideName, string className)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
         DataEvents evnt = new DataEvents();
-        string answer = evnt.UpdateEventsAfterEditInDBbyDragging(id, Date, startTime, endTime);
+        string answer = evnt.UpdateEventsAfterEditInDBbyDragging(id, Date, startTime, endTime, OldDate, guideName, className);
         string jsonString = js.Serialize(answer);
         return jsonString;
     }
@@ -153,11 +153,17 @@ public class FormaFitWebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string updateEventInDB(string classID, string className, string guideID, string classStartTime, string classEndTime, string newMaximumUsersPerClassEdit)
+    public string updateEventInDB
+        (
+        string classID, string className, string guideID, string classStartTime, 
+        string classEndTime, string newMaximumUsersPerClassEdit, string NeedToSendEmail,
+        string classNameInitial, string classNameText, string guideNameInitial, string guideNameText,
+        string eventStartTimeInitial, string eventEndTimeInitial, string whatHasChangedParsed, string eventDate
+        )
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
         DataEvents evnt = new DataEvents();
-        string answer = evnt.updateEventInDB(classID, className, guideID, classStartTime, classEndTime, newMaximumUsersPerClassEdit);
+        string answer = evnt.updateEventInDB(classID, className, guideID, classStartTime, classEndTime, newMaximumUsersPerClassEdit, NeedToSendEmail, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, eventEndTimeInitial, whatHasChangedParsed, eventDate);
         string jsonString = js.Serialize(answer);
         return jsonString;
     }

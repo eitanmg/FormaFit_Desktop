@@ -45,23 +45,35 @@ public class DataEvents
 
         if (RegisteredUsersTBL.dt.Rows.Count > 0)
         {
-            Task myFirstTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditInDatabase(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime));
+            Task myTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditResizeInDatabase(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime));
         }
         return answer;
     }
 
-    private void AsyncUpdateEventsAfterEditInDatabase(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime)
+    private void AsyncUpdateEventsAfterEditResizeInDatabase(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime)
     {
         Mailer mailer = new Mailer();
         mailer.getMailDataForEventResize(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, oldEndTime);
     }
 
 
-    public string UpdateEventsAfterEditInDBbyDragging(string id, string Date, string startTime, string endTime)
+    public string UpdateEventsAfterEditInDBbyDragging(string id, string Date, string startTime, string endTime, string OldDate, string guideName, string className)
     {
         DBServices dbs = new DBServices();
         string answer = dbs.UpdateEventsAfterEditInDBbyDragging("FormaFitConnectionString", "FormaClasses", id, Date, startTime, endTime);
+        DBServices RegisteredUsersTBL = dbs.whoIsRegisteredToThisClass("FormaFitConnectionString", id);
+
+        if (RegisteredUsersTBL.dt.Rows.Count > 0)
+        {
+            Task myTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditDraggingInDatabase(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, OldDate));
+        }
         return answer;
+    }
+
+    private void AsyncUpdateEventsAfterEditDraggingInDatabase(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string OldDate)
+    {
+        Mailer mailer = new Mailer();
+        mailer.getMailDataForEventDragging(RegisteredUsersTBL, className, guideName, Date, startTime, endTime, OldDate);
     }
 
     public string createNewEventInDB(string classID, string NewClassDate, string classStartTime, string classEndTime, string MaximumUsersPerClass, string guideID, string isRecurring)
@@ -137,11 +149,32 @@ public class DataEvents
         return answer;
     }
 
-    public string updateEventInDB(string classID, string className, string guideID, string classStartTime, string classEndTime, string newMaximumUsersPerClassEdit)
+    public string updateEventInDB
+        (
+        string classID, string className, string guideID, string classStartTime,
+        string classEndTime, string newMaximumUsersPerClassEdit, string NeedToSendEmail,
+        string classNameInitial, string classNameText, string guideNameInitial, string guideNameText,
+        string eventStartTimeInitial, string eventEndTimeInitial, string whatHasChangedParsed, string eventDate
+        )
     {
         DBServices dbs = new DBServices();
         string answer = dbs.updateEventInDB("FormaFitConnectionString", classID, className, guideID, classStartTime, classEndTime, newMaximumUsersPerClassEdit);
+        if (NeedToSendEmail == "Yes")
+        {
+            DBServices RegisteredUsersTBL = dbs.whoIsRegisteredToThisClass("FormaFitConnectionString", classID);
+
+            if (RegisteredUsersTBL.dt.Rows.Count > 0)
+            {
+                Task myTask = Task.Factory.StartNew(() => AsyncUpdateEventsAfterEditInDatabase(RegisteredUsersTBL, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, eventEndTimeInitial, whatHasChangedParsed, eventDate));
+            }
+        }
         return answer;
+    }
+
+    private void AsyncUpdateEventsAfterEditInDatabase(DBServices RegisteredUsersTBL, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string eventEndTimeInitial, string whatHasChangedParsed, string eventDate)
+    {
+        Mailer mailer = new Mailer();
+        mailer.getMailDataForEventEdit(RegisteredUsersTBL, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, eventEndTimeInitial, whatHasChangedParsed, eventDate);
     }
 
     public string createNewClassInDB(string className)

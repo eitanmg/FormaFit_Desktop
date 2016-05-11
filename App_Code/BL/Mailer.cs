@@ -66,6 +66,127 @@ public class Mailer
     //----------------------------------------------------end of ResizeMailer---------------------------------------------------
 
 
+    //----------------------------------------------------DraggingMailer---------------------------------------------------
+
+    public void getMailDataForEventDragging(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string OldDate) 
+    {
+
+        string emailSubject = "פורמה-פיט - שינוי מועד חוג " + className + " בתאריך " + Date;
+        foreach (DataRow row in RegisteredUsersTBL.dt.Rows)
+        {
+            string recepientEmail = row["EmailAaddress"].ToString();
+            string recepientName = row["FirstName"].ToString();
+            if (recepientEmail != null && recepientEmail != "")
+            {
+                string builedEmailBody = PopulateBodyForEventDragging(recepientName, className, guideName, Date, startTime, endTime, OldDate);
+                SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody); 
+            }
+        }
+    }
+
+    public string PopulateBodyForEventDragging(string recepientName, string className, string guideName, string Date, string startTime, string endTime, string OldDate)
+    {
+        string body = string.Empty;
+        string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_change_dragging_temp.html");
+        StreamReader reader = new StreamReader(path);
+        body = reader.ReadToEnd();
+        body = body.Replace("{FirstName}", recepientName);
+        body = body.Replace("{ClassName}", className);
+        body = body.Replace("{GuideName}", guideName);
+        body = body.Replace("{oldClassDate}", OldDate);
+        body = body.Replace("{oldClassStartTime}", startTime);
+        body = body.Replace("{oldClassEndTime}", endTime);
+        body = body.Replace("{Date}", Date);
+        return body;
+    }
+
+    //----------------------------------------------------end of DraggingMailer---------------------------------------------------
+
+    //----------------------------------------------------Edit Mailer---------------------------------------------------
+
+    public void getMailDataForEventEdit(DBServices RegisteredUsersTBL, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string eventEndTimeInitial, string whatHasChangedParsed, string eventDate)
+    {
+        string[] whatHasChangedSplit = whatHasChangedParsed.Split(';');
+
+        //string emailSubject = "פורמה-פיט - עדכון לגבי חוג " + className + " בתאריך " + Date;
+        string emailSubject = "";
+
+
+        if (whatHasChangedSplit.Length == 2)
+        {
+            foreach (string str in whatHasChangedSplit)
+            {
+
+                if (str.Contains("className"))
+                {
+                    emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
+                }
+                else if (str.Contains("guideName"))
+                {
+                    emailSubject = "פורמה-פיט - שינוי מדריך בחוג " + classNameInitial + " בתאריך " + eventDate;
+                }
+                else if (str.Contains("classStartTime"))
+                {
+                    emailSubject = "פורמה-פיט - שינוי שעת התחלה בחוג " + classNameInitial + " בתאריך " + eventDate;
+                }
+                else if (str.Contains("classEndTime"))
+                {
+                    emailSubject = "פורמה-פיט - שינוי שעת סיום בחוג " + classNameInitial + " בתאריך " + eventDate;
+                }
+            }
+        }
+
+        //if (whatHasChangedSplit.Length == 3)
+        //{
+        //    foreach (string str in whatHasChangedSplit)
+        //    {
+        //        if (str.Contains("className") && str.Contains("guideName"))
+        //        {
+        //            emailSubject = "פורמה-פיט - שינוי חוג ומדריך " + classNameInitial + " בתאריך " + eventDate;
+        //        }
+        //    }      
+        //}
+
+
+                        // "className"
+                        // "guideName"
+                        // "classStartTime"
+                        // "classEndTime"  
+
+        foreach (DataRow row in RegisteredUsersTBL.dt.Rows)
+        {
+            string recepientEmail = row["EmailAaddress"].ToString();
+            string recepientName = row["FirstName"].ToString();
+            //if (recepientEmail != null && recepientEmail != "")
+            //{
+            //    string builedEmailBody = PopulateBodyForEventDragging(recepientName, className, guideName, Date, startTime, endTime, OldDate);
+            //    SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody);
+            //}
+        }
+    }
+
+    public string PopulateBodyForEventEdit(string recepientName, string className, string guideName, string Date, string startTime, string endTime, string OldDate)
+    {
+        string body = string.Empty;
+        string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_change_dragging_temp.html");
+        StreamReader reader = new StreamReader(path);
+        body = reader.ReadToEnd();
+        body = body.Replace("{FirstName}", recepientName);
+        body = body.Replace("{ClassName}", className);
+        body = body.Replace("{GuideName}", guideName);
+        body = body.Replace("{oldClassDate}", OldDate);
+        body = body.Replace("{oldClassStartTime}", startTime);
+        body = body.Replace("{oldClassEndTime}", endTime);
+        body = body.Replace("{Date}", Date);
+        return body;
+    }
+
+
+
+    //----------------------------------------------------end of Edit Mailer---------------------------------------------------
+
+
+
     public void SendHtmlFormattedEmailForEventResize(string recepientEmail, string subject, string body)
     {
         using (MailMessage mailMessage = new MailMessage())
