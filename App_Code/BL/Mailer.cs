@@ -106,58 +106,121 @@ public class Mailer
 
     public void getMailDataForEventEdit(DBServices RegisteredUsersTBL, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string classStartTime, string eventEndTimeInitial, string classEndTime, string whatHasChangedParsed, string eventDate)
     {
-        string[] whatHasChangedSplit = whatHasChangedParsed.Split(';');
+        //string[] whatHasChangedSplit = whatHasChangedParsed.Split(';');
 
         string emailSubject = "";
-        string emailBodyType = "";
+        string placeHolderHTML = "";
 
-        if (whatHasChangedSplit.Length == 1)
+        switch (whatHasChangedParsed)
         {
-            foreach (string str in whatHasChangedSplit)
-            {
-
-                if (str.Contains("className"))
-                {
-                    emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
-                    emailBodyType = "ClassAndGuide";
-                }
-                else if (str.Contains("guideName"))
-                {
-                    emailSubject = "פורמה-פיט - שינוי מדריך בחוג " + classNameInitial + " בתאריך " + eventDate;
-                    emailBodyType = "ClassAndGuide";
-                }
-                else if (str.Contains("classStartTime"))
-                {
-                    emailSubject = "פורמה-פיט - שינוי שעת התחלה בחוג " + classNameInitial + " בתאריך " + eventDate;
-                    emailBodyType = "Time";
-                }
-                else if (str.Contains("classEndTime"))
-                {
-                    emailSubject = "פורמה-פיט - שינוי שעת סיום בחוג " + classNameInitial + " בתאריך " + eventDate;
-                    emailBodyType = "Time";
-                }
-            }
+            case "className":
+                emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים באותה שעה ";
+                break;
+            case "guideName":
+                emailSubject = "פורמה-פיט - שינוי מדריך בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />מועבר כעת על ידי <span>" + guideNameText;
+                break;
+            case "classStartTime":
+                emailSubject = "פורמה-פיט - שינוי שעת התחלה בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br /> עבר לשעה <span>" + classStartTime + "</span> עד " + classEndTime;
+                break;
+            case "classEndTime":
+                emailSubject = "פורמה-פיט - שינוי שעת סיום בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br /> עבר לשעה <span>" + classStartTime + "</span> עד " + classEndTime;
+                break;
+            case "className;guideName":
+                emailSubject = "פורמה-פיט - עדכון לגבי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים באותה שעה ";
+                break;
+            case "className;guideName;classStartTime":
+                emailSubject = "פורמה-פיט - עדכון לגבי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "className;guideName;classStartTime;classEndTime":
+                emailSubject = "פורמה-פיט - עדכון לגבי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "className;classStartTime":
+                emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "className;classEndTime":
+                emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "className;classStartTime;classEndTime":
+                emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "guideName;classStartTime":
+                emailSubject = "פורמה-פיט - שינוי מדריך ושעה בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />מועבר כעת על ידי <span>" + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "guideName;classEndTime":
+                emailSubject = "פורמה-פיט - שינוי מדריך ושעה בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />מועבר כעת על ידי <span>" + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "guideName;classStartTime;classEndTime":
+                emailSubject = "פורמה-פיט - שינוי מדריך ושעה בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />מועבר כעת על ידי <span>" + guideNameText + " אשר מתקיים משעה " + classStartTime + " עד שעה " + classEndTime;
+                break;
+            case "classStartTime;classEndTime":
+                emailSubject = "פורמה-פיט - שינוי זמן בחוג " + classNameInitial + " בתאריך " + eventDate;
+                placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br /> עבר לשעה <span>" + classStartTime + "</span> עד " + classEndTime;
+                break;
+            default:
+                break;
         }
 
-        if (whatHasChangedSplit.Length > 1)
-        {
-            emailSubject = "פורמה-פיט - עדכון לגבי חוג " + classNameInitial + " בתאריך " + eventDate;
-            foreach (string str in whatHasChangedSplit)
-            {
-                if (str.Contains("className"))
-                {
-                    emailBodyType = "ClassAndGuide";
-                }
-                else if (str.Contains("guideName"))
-                {
-                    emailBodyType = "ClassAndGuide";
-                }
-                else
-                {
-                    emailBodyType = "Time";
-                }
-            }
-        }
+
+        //if (whatHasChangedSplit.Length == 1)
+        //{
+        //    foreach (string str in whatHasChangedSplit)
+        //    {
+
+        //        if (str.Contains("className"))
+        //        {
+        //            emailSubject = "פורמה-פיט - שינוי חוג " + classNameInitial + " בתאריך " + eventDate;
+        //            emailBodyType = "ClassAndGuide";
+        //        }
+        //        else if (str.Contains("guideName"))
+        //        {
+        //            emailSubject = "פורמה-פיט - שינוי מדריך בחוג " + classNameInitial + " בתאריך " + eventDate;
+        //            emailBodyType = "ClassAndGuide";
+        //        }
+        //        else if (str.Contains("classStartTime"))
+        //        {
+        //            emailSubject = "פורמה-פיט - שינוי שעת התחלה בחוג " + classNameInitial + " בתאריך " + eventDate;
+        //            emailBodyType = "Time";
+        //        }
+        //        else if (str.Contains("classEndTime"))
+        //        {
+        //            emailSubject = "פורמה-פיט - שינוי שעת סיום בחוג " + classNameInitial + " בתאריך " + eventDate;
+        //            emailBodyType = "Time";
+        //        }
+        //    }
+        //}
+
+        //if (whatHasChangedSplit.Length > 1)
+        //{
+        //    emailSubject = "פורמה-פיט - עדכון לגבי חוג " + classNameInitial + " בתאריך " + eventDate;
+        //    foreach (string str in whatHasChangedSplit)
+        //    {
+        //        if (str.Contains("className"))
+        //        {
+        //            emailBodyType = "ClassAndGuide";
+        //        }
+        //        else if (str.Contains("guideName"))
+        //        {
+        //            emailBodyType = "ClassAndGuide";
+        //        }
+        //        else
+        //        {
+        //            emailBodyType = "Time";
+        //        }
+        //    }
+        //}
 
 
         foreach (DataRow row in RegisteredUsersTBL.dt.Rows)
@@ -166,28 +229,19 @@ public class Mailer
             string recepientName = row["FirstName"].ToString();
             if (recepientEmail != null && recepientEmail != "")
             {
-                string builedEmailBody = PopulateBodyForEventEdit(recepientName, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, classStartTime, eventEndTimeInitial, classEndTime, whatHasChangedParsed, eventDate, emailBodyType);
+                string builedEmailBody = PopulateBodyForEventEdit(recepientName, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, classStartTime, eventEndTimeInitial, classEndTime, whatHasChangedParsed, eventDate, placeHolderHTML);
                 SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody);
             }
         }
     }
 
-    public string PopulateBodyForEventEdit(string recepientName, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string classStartTime, string eventEndTimeInitial, string classEndTime, string whatHasChangedParsed, string eventDate, string emailBodyType)
+    public string PopulateBodyForEventEdit(string recepientName, string classNameInitial, string classNameText, string guideNameInitial, string guideNameText, string eventStartTimeInitial, string classStartTime, string eventEndTimeInitial, string classEndTime, string whatHasChangedParsed, string eventDate, string placeHolderHTML)
     {
         string body = string.Empty;
         string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_change_modal_temp.html");
         StreamReader reader = new StreamReader(path);
         body = reader.ReadToEnd();
         body = body.Replace("{FirstName}", recepientName);
-        string placeHolderHTML = "";
-        if (emailBodyType == "ClassAndGuide")
-        {
-            placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br />הינו כעת חוג <span>" + classNameText + "</span> עם " + guideNameText + " אשר מתקיים באותה שעה " ;
-        }
-        else
-        {
-            placeHolderHTML = "<span> החוג " + classNameInitial + "</span> עם <span>" + guideNameInitial + " </span> בתאריך <span>" + eventDate + "</span> בשעה <span>" + eventStartTimeInitial + "</span>  עד שעה  <span>" + eventEndTimeInitial + "</span><br /> עבר לשעה <span>" + classStartTime + "</span> עד " + classEndTime;
-        }
         body = body.Replace("{PlaceHolder}", placeHolderHTML);
         return body;
     }
