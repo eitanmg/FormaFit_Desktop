@@ -935,7 +935,7 @@ public class DBServices
         }
     }
 
-    public string addNewUserInDB(string conString, string tableName, string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
+    public string addNewUserInDB(string conString, string tableName, string FirstName, string LastName, string userSex, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
     {
 
         DBServices dbS = new DBServices();
@@ -944,7 +944,7 @@ public class DBServices
         try
         {
             con = dbS.connect(conString);
-            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress], [mailNotification]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "," + "'" + EmailNotification + "')";
+            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress], [Sex], [mailNotification]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "'" + "," + "'" + userSex + "'" + "," + "'" + EmailNotification + "')";
             SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con); // create the data adapter
             DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
             da.Fill(ds); // Fill the datatable (in the dataset), using the Select command

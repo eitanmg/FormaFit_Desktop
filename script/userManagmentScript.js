@@ -30,8 +30,7 @@ window.actionEvents = {
 
 $(document).ready(function () {
 
-    var request = {
-    };
+    var request = {};
 
     var dataString = JSON.stringify(request);
     $.ajax({
@@ -53,26 +52,18 @@ $(document).ready(function () {
             },
     });
 
-});
-
-
-//----------------------------------------------------------Add new user code -----------------------------------------------------------
-
-$(document).ready(function () {
-
     $(".DateField").click(function () {
         $(this).datepicker().datepicker("show")
     });
-
-
 
     $("#AddUser").click(function () {
 
         var pattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
         var FirstName = $("#FirstName").val();
         var LastName = $("#LastName").val();
+        var userSex = $("#sexDDL option:selected").val();
         var UserName = $("#UserName").val();
-        var Password = $("#Password").val();
+        var userPassword = $("#Password").val();
         var UserType = $("#typeDDL option:selected").val();
         var UserStatus = $("#statusDDL option:selected").val();
         var DOB = $("#DOB").val();
@@ -99,17 +90,19 @@ $(document).ready(function () {
             alert("אנא מלא שם משפחה");
             return false;
         }
+        else if ($("#sexDDL option:selected").text().trim() == "מין") {
+            alert("אנא בחר מין");
+            return false;
+        }
         else if (UserName == "") {
             alert("אנא מלא שם משתמש");
             return false;
         }
-        else if (Password == "")
-        {
+        else if (userPassword == "") {
             alert("אנא מלא סיסמה");
             return false;
         }
-        else if ($("#typeDDL option:selected").text().trim() == "סוג משתמש")
-        {
+        else if ($("#typeDDL option:selected").text().trim() == "סוג משתמש") {
             alert("אנא בחר סוג משתמש");
             return false;
         }
@@ -117,8 +110,7 @@ $(document).ready(function () {
             alert("אנא בחר סטאטוס משתמש");
             return false;
         }
-        else if ((!pattern.test($('#DOB').val())) || ($('#DOB').val() == ""))
-        {
+        else if ((!pattern.test($('#DOB').val())) || ($('#DOB').val() == "")) {
             alert("בחירת תאריך לא חוקית");
             return false;
         }
@@ -138,8 +130,7 @@ $(document).ready(function () {
             alert("אנא מלא כתובת מייל תקינה");
             return false;
         }
-        else if ($("#mailNotificationDDL option:selected").text().trim() == "הודעות ועדכונים באימייל")
-        {
+        else if ($("#mailNotificationDDL option:selected").text().trim() == "הודעות ועדכונים באימייל") {
             alert("אנא בחר אם ברצונך לקבל הודעות לאימייל");
             return false;
         }
@@ -148,54 +139,47 @@ $(document).ready(function () {
         }
 
 
-            var request = {                     // send the requset to the server
-                FirstName: FirstName,
-                LastName: LastName,
-                UserName: UserName,
-                Password: Password,
-                UserType: UserType,
-                UserStatus: UserStatus,
-                DOBtoDB: DOBtoDB,
-                BeginDatetoDB: BeginDate,
-                EndDatetoDB: EndDatetoDB,
-                Mobile: Mobile,
-                Email: Email,
-                EmailNotification: EmailNotification
-            };
+        var request = {
+            FirstName: FirstName,
+            LastName: LastName,
+            userSex: userSex,
+            UserName: UserName,
+            userPassword: userPassword,
+            UserType: UserType,
+            UserStatus: UserStatus,
+            DOBtoDB: DOBtoDB,
+            BeginDatetoDB: BeginDatetoDB,
+            EndDatetoDB: EndDatetoDB,
+            Mobile: Mobile,
+            Email: Email,
+            EmailNotification: EmailNotification
+        };
 
-            var dataString = JSON.stringify(request);
-            $.ajax({
-                url: 'FormaFitWebService.asmx/addNewUserInDB',
-                type: 'POST',
-                contentType: 'application/json; charset = utf-8',
-                dataType: 'json',
-                data: dataString,
-                success:
-                     function successCBCreatNewUser(result) {
-                         $('#addUserModal').modal('toggle');
-                         updateTable();
-                     },
-            });
+        var dataString = JSON.stringify(request);
+        $.ajax({
+            url: 'FormaFitWebService.asmx/addNewUserInDB',
+            type: 'POST',
+            contentType: 'application/json; charset = utf-8',
+            dataType: 'json',
+            data: dataString,
+            success:
+                function successCBGetUsers(result) {
+                    result = $.parseJSON(result.d);
+                    alert(result);
+                },
+        });
+
     });
-
-
-
 
 });
 
+
+//----------------------------------------------------------Add new user code -----------------------------------------------------------
+
+
+
 //------------------------------------------------------End of Add new user code --------------------------------------------------------
 
-
-//$(document).ready(function () {
-
-
-//    $("#removeBT").click(function () {
-
-//        var id = $('#idToRemove').val();
-
-//        if (!confirm("?בטוח למחוק משתמש זה")) {
-//            return false;
-//        }
 
 //        var request = { Values: id };
 //        var dataString = JSON.stringify(request);
@@ -217,12 +201,6 @@ $(document).ready(function () {
 
 //------------------------------------------------------User Edit ----------------------------
 
-//var request = {
-//    newVal: newVal,
-//    col: col,
-//    id: id,
-//    currentVal: currentVal
-//};
 
 //var dataString = JSON.stringify(request);
 //$.ajax({
@@ -238,8 +216,8 @@ $(document).ready(function () {
 //         },
 //});
 
-
 function updateTable() {
 
     location.reload();
+
 }

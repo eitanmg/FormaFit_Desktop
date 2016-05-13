@@ -404,29 +404,17 @@ public class FormaFitWebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    //--------------------------------------------------------------------------
-    // Method must be public
-    // The method must return a string
-    // The name of the parameters in the window must be identical to the names
-    // passed in the Ajax call
-    //--------------------------------------------------------------------------
-    public string addNewUserInDB(string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOBtoDB, string BeginDatetoDB, string EndDatetoDB, string Mobile, string Email, string EmailNotification)
+    public string addNewUserInDB(string FirstName, string LastName,string userSex, string UserName, string userPassword, string UserType, string UserStatus, string DOBtoDB, string BeginDatetoDB, string EndDatetoDB, string Mobile, string Email, string EmailNotification)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
         User user = new User();
-        string answer = user.addNewUserInDB(FirstName, LastName, UserName, Password, UserType, UserStatus, DOBtoDB, BeginDatetoDB, EndDatetoDB, Mobile, Email, EmailNotification);
+        string answer = user.addNewUserInDB(FirstName, LastName, UserName, userSex, userPassword, UserType, UserStatus, DOBtoDB, BeginDatetoDB, EndDatetoDB, Mobile, Email, EmailNotification);
         string jsonString = js.Serialize(answer);
         return jsonString;
     }
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    //--------------------------------------------------------------------------
-    // Method must be public
-    // The method must return a string
-    // The name of the parameters in the window must be identical to the names
-    // passed in the Ajax call
-    //--------------------------------------------------------------------------
     public string updateExistingUserInDB(string newVal, string col, string id, string currentVal)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
@@ -438,12 +426,6 @@ public class FormaFitWebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    //--------------------------------------------------------------------------
-    // Method must be public
-    // The method must return a string
-    // The name of the parameters in the window must be identical to the names
-    // passed in the Ajax call
-    //--------------------------------------------------------------------------
     public string DeleteUserFromDB(string Values)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
