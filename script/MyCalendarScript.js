@@ -211,13 +211,18 @@
                 // $("#deleteEventfromEditModal").click(function () {
                 $("#deleteEventfromEditModal").unbind("click").click(function () {
                     if (!confirm("?בטוח לגבי מחיקת אירוע זה")) {
-                        return 0;
+                        return false;
                     }
                     else {
                         var classID = calEvent.id;
 
                         var deleteRequest = {
                             classID: classID,
+                            classNameInitial: classNameInitial,
+                            guideNameInitial: guideNameInitial,
+                            eventStartTimeInitial: eventStartTimeInitial,
+                            eventEndTimeInitial: eventEndTimeInitial,
+                            eventDate: eventDate
                         };
 
                         var dataString = JSON.stringify(deleteRequest); // parsing the request above. 

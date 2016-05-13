@@ -912,14 +912,13 @@ public class DBServices
         try
         {
             con = dbS.connect(conString);
-            String selectStr = "SELECT [FirstName], [LastName], [UserName], [Password], [UserType], [Status],CONVERT(char(10), [DOB],126)AS DOB ,CONVERT(char(10), [DateOfStart],126) AS DateOfStart ,CONVERT(char(10), [DateOfFinish],126) AS DateOfFinish, [PhoneNumber], [EmailAaddress] FROM FormaUsers"; // create the select that will be used by the adapter to select data from the DB
+            String selectStr = "SELECT [FirstName], [LastName], [UserName], [Password], [UserType], [Status], CONVERT(char(10), [DOB],126)AS DOB ,CONVERT(char(10), [DateOfStart],126) AS DateOfStart ,CONVERT(char(10), [DateOfFinish],126) AS DateOfFinish, [PhoneNumber], [EmailAaddress], [Sex], [mailNotification] FROM FormaUsers";
             SqlDataAdapter da = new SqlDataAdapter(selectStr, con);
             DataSet ds = new DataSet();  
             da.Fill(ds);                        
             DataTable dt = ds.Tables[0];
             dbS.dt = dt;
             dbS.da = da;
-
             return dbS;
         }
         catch (Exception ex)
@@ -936,28 +935,23 @@ public class DBServices
         }
     }
 
-    public string addNewUserInDB(string conString, string tableName, string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email)
+    public string addNewUserInDB(string conString, string tableName, string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
     {
 
-        DBServices dbS = new DBServices(); // create a helper class
+        DBServices dbS = new DBServices();
         SqlConnection con = null;
 
         try
         {
-            con = dbS.connect(conString); // open the connection to the database
-
-
-            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "')";
-            // create the select that will be used by the adapter to select data from the DB
+            con = dbS.connect(conString);
+            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress], [mailNotification]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "," + "'" + EmailNotification + "')";
             SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con); // create the data adapter
-
             DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
             da.Fill(ds); // Fill the datatable (in the dataset), using the Select command
-            return "האירוע עודכן בהצלחה";
+            return "המשתמש נוסף בהצלחה";
         }
         catch (Exception ex)
         {
-            // write to log
             throw ex;
         }
         finally

@@ -11,6 +11,9 @@ using System.Net;
 using System.Net.Mail;
 using System.IO;
 
+using System.Threading.Tasks;
+using System.Threading;
+
 /// <summary>
 /// Summary description for User
 /// </summary>
@@ -84,14 +87,18 @@ public class User
         return dbs.dt;
     }
 
-    public string addNewUserInDB(string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email)
+    public string addNewUserInDB(string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
     {
         DBServices dbs = new DBServices();
-        string emailSubject = "תודה על הרשמתך לאפליקציית פורמה-פיט";
-        string answer = dbs.addNewUserInDB("FormaFitConnectionString", "FormaUsers", FirstName, LastName, UserName, Password, UserType, UserStatus, DOB, BeginDate, EndDate, Mobile, Email);
-        string builedEmailBody = PopulateBody(FirstName, UserName, Password);
-        SendHtmlFormattedEmail(Email,emailSubject,builedEmailBody);
+        string answer = dbs.addNewUserInDB("FormaFitConnectionString", "FormaUsers", FirstName, LastName, UserName, Password, UserType, UserStatus, DOB, BeginDate, EndDate, Mobile, Email, EmailNotification);
+        Task myTask = Task.Factory.StartNew(() => AsyncUpdateUserInDB(Email,FirstName, UserName, Password));
         return answer;
+    }
+
+    private void AsyncUpdateUserInDB(string Email, string FirstName, string UserName, string Password)
+    {
+        Mailer mailer = new Mailer();
+        mailer.getMailDataForNewUserEmail(Email, FirstName, UserName, Password);
     }
 
     public string updateExistingUserInDB(string newVal, string col, string id, string currentVal)
@@ -113,40 +120,5 @@ public class User
         DBServices dbs = new DBServices();
         dbs = dbs.getRegisteredUsersFromDB("FormaFitConnectionString");
         return dbs.dt;
-    }
-
-    private string PopulateBody(string FirstName, string UserName, string Password)
-    {
-        string body = string.Empty;
-        using (StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_template.html")))
-        {
-            body = reader.ReadToEnd();
-        }
-        body = body.Replace("{FirstName}", FirstName);
-        body = body.Replace("{UserName}", UserName);
-        body = body.Replace("{Password}", Password);
-        return body;
-    }
-
-    private void SendHtmlFormattedEmail(string recepientEmail, string subject, string body)
-    {
-        using (MailMessage mailMessage = new MailMessage())
-        {
-            mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["UserName"]);
-            mailMessage.Subject = subject;
-            mailMessage.Body = body;
-            mailMessage.IsBodyHtml = true;
-            mailMessage.To.Add(new MailAddress(recepientEmail));
-            SmtpClient smtp = new SmtpClient();
-            smtp.Host = ConfigurationManager.AppSettings["Host"];
-            smtp.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["EnableSsl"]);
-            System.Net.NetworkCredential NetworkCred = new System.Net.NetworkCredential();
-            NetworkCred.UserName = ConfigurationManager.AppSettings["UserName"];
-            NetworkCred.Password = ConfigurationManager.AppSettings["Password"];
-            smtp.UseDefaultCredentials = true;
-            smtp.Credentials = NetworkCred;
-            smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
-            smtp.Send(mailMessage);
-        }
     }
 }

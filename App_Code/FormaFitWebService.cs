@@ -142,11 +142,11 @@ public class FormaFitWebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string deleteEventFromDB(string classID)
+    public string deleteEventFromDB(string classID, string classNameInitial, string guideNameInitial, string eventStartTimeInitial, string eventEndTimeInitial, string eventDate)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
         DataEvents evnt = new DataEvents();
-        string answer = evnt.deleteEventFromDB(classID);
+        string answer = evnt.deleteEventFromDB(classID, classNameInitial, guideNameInitial, eventStartTimeInitial, eventEndTimeInitial, eventDate);
         string jsonString = js.Serialize(answer);
         return jsonString;
     }
@@ -410,11 +410,11 @@ public class FormaFitWebService : System.Web.Services.WebService
     // The name of the parameters in the window must be identical to the names
     // passed in the Ajax call
     //--------------------------------------------------------------------------
-    public string addNewUserInDB(string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email)
+    public string addNewUserInDB(string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOBtoDB, string BeginDatetoDB, string EndDatetoDB, string Mobile, string Email, string EmailNotification)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
         User user = new User();
-        string answer = user.addNewUserInDB(FirstName, LastName, UserName, Password, UserType, UserStatus, DOB, BeginDate, EndDate, Mobile, Email);
+        string answer = user.addNewUserInDB(FirstName, LastName, UserName, Password, UserType, UserStatus, DOBtoDB, BeginDatetoDB, EndDatetoDB, Mobile, Email, EmailNotification);
         string jsonString = js.Serialize(answer);
         return jsonString;
     }

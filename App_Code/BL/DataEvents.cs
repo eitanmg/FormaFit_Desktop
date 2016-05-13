@@ -142,11 +142,24 @@ public class DataEvents
         return answer;
     }
 
-    public string deleteEventFromDB(string classID)
+    public string deleteEventFromDB(string classID, string classNameInitial, string guideNameInitial, string eventStartTimeInitial, string eventEndTimeInitial, string eventDate)
     {
         DBServices dbs = new DBServices();
         string answer = dbs.deleteEventFromDB("FormaFitConnectionString", "FormaClasses", classID);
+
+        DBServices RegisteredUsersTBL = dbs.whoIsRegisteredToThisClass("FormaFitConnectionString", classID);
+
+        if (RegisteredUsersTBL.dt.Rows.Count > 0)
+        {
+            Task myTask = Task.Factory.StartNew(() => AsyncDeleteEventFromDB(RegisteredUsersTBL, classNameInitial, guideNameInitial, eventStartTimeInitial, eventEndTimeInitial, eventDate));
+        }
         return answer;
+    }
+
+    private void AsyncDeleteEventFromDB(DBServices RegisteredUsersTBL, string classNameInitial, string guideNameInitial, string eventStartTimeInitial, string eventEndTimeInitial, string eventDate)
+    {
+        Mailer mailer = new Mailer();
+        mailer.getMailDataForDeleteEvent(RegisteredUsersTBL, classNameInitial, guideNameInitial, eventStartTimeInitial, eventEndTimeInitial, eventDate);
     }
 
     public string updateEventInDB

@@ -35,7 +35,7 @@ public class Mailer
             if (recepientEmail != null && recepientEmail != "")
             {
                 string builedEmailBody = PopulateBodyForEventResize(recepientName, className, guideName, Date, startTime, endTime, oldEndTime);
-                SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody); 
+                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody); 
             }
         }
     }
@@ -79,7 +79,7 @@ public class Mailer
             if (recepientEmail != null && recepientEmail != "")
             {
                 string builedEmailBody = PopulateBodyForEventDragging(recepientName, className, guideName, Date, startTime, endTime, OldDate);
-                SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody); 
+                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody); 
             }
         }
     }
@@ -230,7 +230,7 @@ public class Mailer
             if (recepientEmail != null && recepientEmail != "")
             {
                 string builedEmailBody = PopulateBodyForEventEdit(recepientName, classNameInitial, classNameText, guideNameInitial, guideNameText, eventStartTimeInitial, classStartTime, eventEndTimeInitial, classEndTime, whatHasChangedParsed, eventDate, placeHolderHTML);
-                SendHtmlFormattedEmailForEventResize(recepientEmail, emailSubject, builedEmailBody);
+                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
             }
         }
     }
@@ -251,8 +251,72 @@ public class Mailer
     //----------------------------------------------------end of Edit Mailer---------------------------------------------------
 
 
+    //----------------------------------------------------Delete-Cancel Mailer---------------------------------------------------
 
-    public void SendHtmlFormattedEmailForEventResize(string recepientEmail, string subject, string body)
+    public void getMailDataForDeleteEvent(DBServices RegisteredUsersTBL, string classNameInitial, string guideNameInitial, string eventStartTimeInitial, string eventEndTimeInitial, string eventDate)
+    {
+
+        string emailSubject = "פורמה-פיט - ביטול חוג " + classNameInitial + " בתאריך " + eventDate;
+        foreach (DataRow row in RegisteredUsersTBL.dt.Rows)
+        {
+            string recepientEmail = row["EmailAaddress"].ToString();
+            string recepientName = row["FirstName"].ToString();
+            if (recepientEmail != null && recepientEmail != "")
+            {
+                string builedEmailBody = PopulateBodyForDeleteEvent(recepientName, classNameInitial, guideNameInitial, eventDate, eventStartTimeInitial, eventEndTimeInitial);
+                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
+            }
+        }
+    }
+
+    public string PopulateBodyForDeleteEvent(string recepientName, string classNameInitial, string guideNameInitial, string eventDate, string eventStartTimeInitial, string eventEndTimeInitial)
+    {
+        string body = string.Empty;
+        string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_change_delete_temp.html");
+        StreamReader reader = new StreamReader(path);
+        body = reader.ReadToEnd();
+        body = body.Replace("{FirstName}", recepientName);
+        body = body.Replace("{ClassName}", classNameInitial);
+        body = body.Replace("{GuideName}", guideNameInitial);
+        body = body.Replace("{oldClassDate}", eventDate);
+        body = body.Replace("{oldClassStartTime}", eventStartTimeInitial);
+        body = body.Replace("{oldClassEndTime}", eventEndTimeInitial);
+        return body;
+    }
+
+    //----------------------------------------------------end of Delete-Cancel Mailer---------------------------------------------------
+
+    //----------------------------------------------------New User Mailer---------------------------------------------------
+
+    public void getMailDataForNewUserEmail(string Email, string FirstName, string UserName, string Password)
+    {
+        string emailSubject = "תודה על הרשמתך לאפליקציית פורמה-פיט";
+        string recepientEmail = Email;
+        string recepientName = FirstName;
+        string builedEmailBody = PopulateBodyForNewUserEmail(recepientName, UserName, Password);
+        SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
+    }
+
+
+
+    private string PopulateBodyForNewUserEmail(string FirstName, string UserName, string Password)
+    {
+        string body = string.Empty;
+        string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_template.html");
+        StreamReader reader = new StreamReader(path);
+        body = reader.ReadToEnd();
+        body = body.Replace("{FirstName}", FirstName);
+        body = body.Replace("{UserName}", UserName);
+        body = body.Replace("{Password}", Password);
+        return body;
+    }
+
+    //----------------------------------------------------end of New User Mailer---------------------------------------------------
+
+
+    //----------------------------------------------------Mailer Function---------------------------------------------------
+    
+    public void SendHtmlFormattedEmail(string recepientEmail, string subject, string body)
     {
         using (MailMessage mailMessage = new MailMessage())
         {
@@ -274,3 +338,5 @@ public class Mailer
         }
     }
 }
+
+//--------------------------------------------------------------------------------------------------------------------------
