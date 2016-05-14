@@ -14,17 +14,95 @@ function actionFormatter(value, row, index) {
 }
 
 window.actionEvents = {
-    'click .mail': function (e, value, row, index) {
-        alert('You click like icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+    'click .mail': function (e, value, row, index)
+    {
+        var rowParsed = JSON.stringify(row);
+        if (row.EmailAaddress == "")
+        {
+            alert("אנא הזן כתובת מייל תקינה");
+            return false;
+        }
+        else if (!confirm("?" + "לשלוח אימייל עם פרטי המשתמש וסיסמה אל " + row.FirstName + " " + row.LastName)) {
+            return false;
+        }
+        else
+        {
+            var UserName = row.UserName;
+            var FirstName = row.FirstName;
+            var userPassword = row.Password.trim();
+            var emailAddress = row.EmailAaddress.trim();
+            var request = {
+                UserName: UserName,
+                FirstName: FirstName,
+                userPassword: userPassword,
+                emailAddress: emailAddress
+            };
+            var dataString = JSON.stringify(request);
+            $.ajax({
+                url: 'FormaFitWebService.asmx/SendEmailWithCredentials',
+                type: 'POST',
+                contentType: 'application/json; charset = utf-8',
+                dataType: 'json',
+                data: dataString,
+                success:
+                    function successCBDeleteUserFromDB(doc) {
+                        doc = $.parseJSON(doc.d);
+                        alert(doc);
+                    },
+            });
+        }
     },
-    'click .edit': function (e, value, row, index) {
-        alert('You click edit icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+    'click .edit': function (e, value, row, index)
+    {
+        $('#editUserModal').modal('show');
+        var DOBParsed = row.DOB.split('-');
+        var DateOfStartParsed = row.DateOfStart.split('-');
+        var DateOfFinishParsed = row.DateOfFinish.split('-');
+        DOBParsed = DOBParsed[2] + "/" + DOBParsed[1] + "/" + DOBParsed[0];
+        DateOfStartParsed = DateOfStartParsed[2] + "/" + DateOfStartParsed[1] + "/" + DateOfStartParsed[0];
+        DateOfFinishParsed = DateOfFinishParsed[2] + "/" + DateOfFinishParsed[1] + "/" + DateOfFinishParsed[0];
+
+        $('#FirstNameEdit').val(row.FirstName);
+        $('#LastNameEdit').val(row.LastName);
+        $('select option:contains(' + row.Sex + ')').prop('selected', true);
+        $('#UserNameEdit').val(row.UserName);
+        $('#PasswordEdit').val(row.Password);
+        $('select option:contains(' + row.UserType + ')').prop('selected', true);
+        $('select option:contains(' + row.UserStatus + ')').prop('selected', true);
+        $('#DOBEdit').val(DOBParsed);
+        $('#BeginDateEdit').val(DateOfStartParsed);
+        $('#EndDateEdit').val(DateOfFinishParsed);
+        $('#MobileEdit').val(row.PhoneNumber);
+        $('#EmailEdit').val(row.EmailAaddress);
+        $('select option:contains(' + row.mailNotification + ')').prop('selected', true);
+
     },
-    'click .remove': function (e, value, row, index) {
-        alert('You click remove icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+    'click .remove': function (e, value, row, index)
+    {
+        var rowParsed = JSON.stringify(row);
+        if (!confirm("?בטוח לגבי מחיקת " + row.FirstName + " " + row.LastName + "\n\n" + "סטאטוס משתמש זה יהפוך להיות לא פעיל *"))
+        {
+            return false;
+        }
+        else
+        {
+            var UserName = row.UserName;
+            var request = { UserName: UserName };
+            var dataString = JSON.stringify(request);
+            $.ajax({
+                url: 'FormaFitWebService.asmx/DeleteUserFromDB',
+                type: 'POST',
+                contentType: 'application/json; charset = utf-8',
+                dataType: 'json',
+                data: dataString,
+                success:
+                    function successCBDeleteUserFromDB(doc) {
+                        doc = $.parseJSON(doc.d);
+                        alert(doc);
+                        updateTable();
+                    },
+            });
+        }
     }
 };
 
@@ -74,13 +152,13 @@ $(document).ready(function () {
         var EmailNotification = $("#mailNotificationDDL option:selected").val();
 
         var DOBsplitted = $('#DOB').val().split("/");
-        var DOBtoDB = DOBsplitted[2] + "-" + DOBsplitted[0] + "-" + DOBsplitted[1];
+        var DOBtoDB = DOBsplitted[2] + "-" + DOBsplitted[1] + "-" + DOBsplitted[0];
 
         var BeginDate = $('#BeginDate').val().split("/");
-        var BeginDatetoDB = BeginDate[2] + "-" + BeginDate[0] + "-" + BeginDate[1];
+        var BeginDatetoDB = BeginDate[2] + "-" + BeginDate[1] + "-" + BeginDate[0];
 
         var EndDate = $('#EndDate').val().split("/");
-        var EndDatetoDB = EndDate[2] + "-" + EndDate[0] + "-" + EndDate[1];
+        var EndDatetoDB = EndDate[2] + "-" + EndDate[1] + "-" + EndDate[0];
 
         if (FirstName == "") {
             alert("אנא מלא שם פרטי");
@@ -163,7 +241,8 @@ $(document).ready(function () {
             dataType: 'json',
             data: dataString,
             success:
-                function successCBGetUsers(result) {
+                function successaddNewUserInDB(result)
+                {
                     result = $.parseJSON(result.d);
                     alert(result);
                 },

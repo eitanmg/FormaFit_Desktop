@@ -996,28 +996,21 @@ public class DBServices
         }
     }
 
-    public string DeleteUserFromDB(string conString, string tableName, string values)
+    public string DeleteUserFromDB(string conString, string tableName, string UserName)
     {
-
-        DBServices dbS = new DBServices(); // create a helper class
+        DBServices dbS = new DBServices();
         SqlConnection con = null;
-
         try
         {
-            con = dbS.connect(conString); // open the connection to the database
-
-            String InsertStr = "DELETE FROM " + tableName + " WHERE UserName = " + values + "";
-            //DELETE FROM FormaUsers WHERE UserName = 1;
-            SqlDataAdapter da = new SqlDataAdapter(InsertStr, con); // create the data adapter
-
-            DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
-            da.Fill(ds); // Fill the datatable (in the dataset), using the Select command
-
+            con = dbS.connect(conString);
+            String UpdateStr = "UPDATE " + tableName + " SET [Status] = 'לא פעיל'" + " WHERE [UserName] = " + UserName;
+            SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con); // create the data adapter 
+            DataSet ds = new DataSet();
+            da.Fill(ds);
             return "נמחק בהצלחה";
         }
         catch (Exception ex)
         {
-            // write to log
             throw ex;
         }
         finally

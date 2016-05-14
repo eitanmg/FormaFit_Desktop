@@ -108,10 +108,10 @@ public class User
         return answer;
     }
 
-    public string DeleteUserFromDB(string values)
+    public string DeleteUserFromDB(string UserName)
     {
         DBServices dbs = new DBServices();
-        string answer = dbs.DeleteUserFromDB("FormaFitConnectionString", "FormaUsers", values);
+        string answer = dbs.DeleteUserFromDB("FormaFitConnectionString", "FormaUsers", UserName);
         return answer;
     }
 

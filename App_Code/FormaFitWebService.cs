@@ -426,11 +426,11 @@ public class FormaFitWebService : System.Web.Services.WebService
 
     [WebMethod]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
-    public string DeleteUserFromDB(string Values)
+    public string DeleteUserFromDB(string UserName)
     {
         JavaScriptSerializer js = new JavaScriptSerializer();
         User user = new User();
-        string answer = user.DeleteUserFromDB(Values);
+        string answer = user.DeleteUserFromDB(UserName);
         string jsonString = js.Serialize(answer);
         return jsonString;
     }
@@ -456,6 +456,15 @@ public class FormaFitWebService : System.Web.Services.WebService
         string jsonString = js.Serialize(rows);
         return jsonString;
     }
-    
 
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string SendEmailWithCredentials(string UserName, string FirstName, string userPassword, string emailAddress)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        Mailer mail = new Mailer();
+        string answer = mail.SendEmailWithCredentials(UserName, FirstName, userPassword, emailAddress);
+        string jsonString = js.Serialize(answer);
+        return jsonString;
+    }
 }
