@@ -77,7 +77,6 @@ $(document).ready(function () {
                         {
                             doc = $.parseJSON(doc.d);
                             alert(doc);
-                            //updateTable();
                         },
                 });
             }
