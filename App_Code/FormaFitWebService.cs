@@ -467,4 +467,60 @@ public class FormaFitWebService : System.Web.Services.WebService
         string jsonString = js.Serialize(answer);
         return jsonString;
     }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string getGoalsFromDB()
+    {
+        Goal goal = new Goal();
+        DataTable dt = goal.getGoalsFromDB();
+        List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+        Dictionary<string, object> row;
+        foreach (DataRow dr in dt.Rows)
+        {
+            row = new Dictionary<string, object>();
+            foreach (DataColumn col in dt.Columns)
+            {
+                row.Add(col.ColumnName, dr[col]);
+            }
+            rows.Add(row);
+        }
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        string jsonString = js.Serialize(rows);
+        return jsonString;
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string DeleteGoalsFromDB(string GoalID)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        Goal goal = new Goal();
+        string answer = goal.DeleteGoalsFromDB(GoalID);
+        string jsonString = js.Serialize(answer);
+        return jsonString;
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string updateExistingGoalInDB(string _GoalID, string newGoalName, string newGoalStatus, string newUnitType)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        Goal goal = new Goal();
+        string answer = goal.updateExistingGoalInDB(_GoalID, newGoalName, newGoalStatus, newUnitType);
+        string jsonString = js.Serialize(answer);
+        return jsonString;
+    }
+
+    [WebMethod]
+    [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+    public string addNewGoalInDB(string newGoalName, string newGoalStatus, string newGoalunitType)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        Goal goal = new Goal();
+        string answer = goal.addNewGoalInDB(newGoalName, newGoalStatus, newGoalunitType);
+        string jsonString = js.Serialize(answer);
+        return jsonString;
+    }
+
 }

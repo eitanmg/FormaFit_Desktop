@@ -1031,4 +1031,116 @@ public class DBServices
             }
         }
     }
+
+    public DBServices getGoalsFromDB(string conString)
+    {
+        DBServices dbS = new DBServices();
+        SqlConnection con = null;
+        try
+        {
+            con = dbS.connect(conString);
+            String selectStr = "SELECT [GoalID],[GoalName],[GoalStatus], [UnitType] FROM [FormaActualGoals]";
+            SqlDataAdapter da = new SqlDataAdapter(selectStr, con);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            DataTable dt = ds.Tables[0];
+            dbS.dt = dt;
+            dbS.da = da;
+            return dbS;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw ex;
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+        }
+    }
+
+    public string DeleteGoalsFromDB(string conString, string tableName, string GoalID)
+    {
+        DBServices dbS = new DBServices();
+        SqlConnection con = null;
+        try
+        {
+            con = dbS.connect(conString);
+            String InsertStr = "UPDATE " + tableName + " SET GoalStatus = 'לא פעיל' WHERE GoalID IN (" + GoalID + ")";
+            SqlDataAdapter da = new SqlDataAdapter(InsertStr, con);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            return "השתנה בהצלחה";
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw ex;
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+        }
+    }
+
+    public string updateExistingGoalInDB(string conString, string tableName, string _GoalID, string newGoalName, string newGoalStatus, string newUnitType)
+    {
+        DBServices dbS = new DBServices();
+        SqlConnection con = null;
+        try
+        {
+            con = dbS.connect(conString);
+            String InsertStr = "UPDATE " + tableName + " SET [GoalName] = " + "'" + newGoalName + "'" + "," + "[GoalStatus] = " + "'" + newGoalStatus + "'" + "," + "[UnitType] = " + "'" + newUnitType + "'" + "WHERE GoalID = " + _GoalID;
+            SqlDataAdapter da = new SqlDataAdapter(InsertStr, con);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            return "עודכן בהצלחה";
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw ex;
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+        }
+    }
+
+    public string addNewGoalInDB(string conString, string tableName, string newGoalName, string newGoalStatus, string newGoalunitType)
+    {
+        DBServices dbS = new DBServices();
+        SqlConnection con = null;
+        try
+        {
+            con = dbS.connect(conString);
+            String UpdateStr = "INSERT INTO " + tableName + "([GoalName], [GoalStatus], [UnitType]) VALUES ('" + newGoalName + "'" + "," + "'" + newGoalStatus + "'" + "," + "'" + newGoalunitType + "'" + ")";
+            SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            return "עודכן בהצלחה";
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw ex;
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+        }
+    }
+
 }
