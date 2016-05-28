@@ -18,7 +18,7 @@
             buttonIcons: false, // show the prev/next text
             weekNumbers: true,
             editable: true,
-           // defaultView: 'agendaWeek',
+            // defaultView: 'agendaWeek',
             eventLimit: true, // allow "more" link when too many events
             events: function (start, end, timezone, callback) {  //start the ajax call to retrive all the data events from DB
                 var request = {}; // its an empty requset because i send nothing to the DB 
@@ -51,34 +51,56 @@
                 var className = event.title.split(' - ')[0];
                 endTime = event.end.format().split('T');
                 var oldEndTime = event.end._i.split('T')[1];
-                if (!confirm("הארוע יסתיים כעת בתאריך " + endTime[0] + " בשעה " + endTime[1])) {
-                    revertFunc();
+
+                //if (!confirm("הארוע יסתיים כעת בתאריך " + endTime[0] + " בשעה " + endTime[1])) {
+                //    revertFunc();
+                //}
+
+                swal({
+                    title: "הזזת חוג " + className,
+                    text: "הארוע יסתיים כעת בתאריך " + endTime[0] + " בשעה " + endTime[1],
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#31F164",
+                    cancelButtonColor: '#DDE5DF',
+                    confirmButtonText: "אישור",
+                    cancelButtonText: "ביטול",
+                    closeOnConfirm: true,
+                    closeOnCancel: true,
+                    showLoaderOnConfirm: true
                 }
-                else {
-                    var request = { // in case i will forget - i wantet to change only those parameters - because in the resize func the start time cannot be changed! 
-                        id: event.id, // use it later in the DB 
-                        Date: endTime[0], // it doesn't matter because in the resize function the startTime and endTime variable contain the same date 
-                        endTime: endTime[1],
-                        guideName: guideName,
-                        className: className,
-                        startTime: startTime,
-                        oldEndTime: oldEndTime
-                    }
-                    var dataString = JSON.stringify(request); // parsing the request above. 
-                    $.ajax({
-                        url: 'FormaFitWebService.asmx/UpdateEventsAfterEditInDB', // function that only updating the edits. 
-                        type: 'POST',
-                        contentType: 'application/json; charset = utf-8',
-                        dataType: 'json',
-                        data: dataString,
-                        success:
-                            function successCBgetEventsFromDB(doc) {
-                                doc = $.parseJSON(doc.d);
-                                alert(doc);
-                                $('#calendar').fullCalendar('refetchEvents');
+                    ,
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            var request = { // in case i will forget - i wantet to change only those parameters - because in the resize func the start time cannot be changed! 
+                                id: event.id, // use it later in the DB 
+                                Date: endTime[0], // it doesn't matter because in the resize function the startTime and endTime variable contain the same date 
+                                endTime: endTime[1],
+                                guideName: guideName,
+                                className: className,
+                                startTime: startTime,
+                                oldEndTime: oldEndTime
                             }
+                            var dataString = JSON.stringify(request); // parsing the request above. 
+                            $.ajax({
+                                url: 'FormaFitWebService.asmx/UpdateEventsAfterEditInDB', // function that only updating the edits. 
+                                type: 'POST',
+                                contentType: 'application/json; charset = utf-8',
+                                dataType: 'json',
+                                data: dataString,
+                                success:
+                                    function successCBgetEventsFromDB(doc) {
+                                        doc = $.parseJSON(doc.d);
+                                        // alert(doc);
+                                        swal(doc, "", "success");
+                                        $('#calendar').fullCalendar('refetchEvents');
+                                    }
+                            });
+                        }
+                        else {
+                            revertFunc();
+                        }
                     });
-                }
             },
             eventDrop: function (event, delta, revertFunc) {
                 startTimeAndDate = event.start.format().split('T');
@@ -86,36 +108,63 @@
                 var OldDate = event.start._i.split('T')[0];
                 var guideName = event.title.split(' - ')[1];
                 var className = event.title.split(' - ')[0];
-                if (!confirm("להזיז את חוג " + event.title + " לתאריך " + startTimeAndDate[0] + " שיתחיל בשעה " + startTimeAndDate[1] + " ויסתיים בשעה " + endTimeAndDate[1] + "?")) {
-                    revertFunc();
+
+                swal({
+                    title: "הזזת חוג " + className,
+                    text: "להזיז את חוג " + event.title + " לתאריך " + startTimeAndDate[0] + " שיתחיל בשעה " + startTimeAndDate[1] + " ויסתיים בשעה " + endTimeAndDate[1] + "?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#31F164",
+                    cancelButtonColor: '#DDE5DF',
+                    confirmButtonText: "אישור",
+                    cancelButtonText: "ביטול",
+                    closeOnConfirm: true,
+                    closeOnCancel: true,
+                    showLoaderOnConfirm: true
+
                 }
-                else {
-                    var request = {
-                        id: event.id,
-                        Date: startTimeAndDate[0],
-                        startTime: startTimeAndDate[1],
-                        endTime: endTimeAndDate[1],
-                        OldDate: OldDate,
-                        guideName: guideName,
-                        className: className
+    ,
+    function (isConfirm) {
+        if (isConfirm) {
+            var request = {
+                id: event.id,
+                Date: startTimeAndDate[0],
+                startTime: startTimeAndDate[1],
+                endTime: endTimeAndDate[1],
+                OldDate: OldDate,
+                guideName: guideName,
+                className: className
+            }
+            var dataString = JSON.stringify(request); // parsing the request above. 
+            $.ajax({
+                url: 'FormaFitWebService.asmx/UpdateEventsAfterEditInDBbyDragging', // function that only updating the draggble events in DB. 
+                type: 'POST',
+                contentType: 'application/json; charset = utf-8',
+                dataType: 'json',
+                data: dataString,
+                success:
+                    function successCBgetEventsFromDB(doc) {
+                        doc = $.parseJSON(doc.d);
+                        //alert(doc);
+                        swal(doc, "", "success");
+                        $('#calendar').fullCalendar('refetchEvents');
                     }
-                    var dataString = JSON.stringify(request); // parsing the request above. 
-                    $.ajax({
-                        url: 'FormaFitWebService.asmx/UpdateEventsAfterEditInDBbyDragging', // function that only updating the draggble events in DB. 
-                        type: 'POST',
-                        contentType: 'application/json; charset = utf-8',
-                        dataType: 'json',
-                        data: dataString,
-                        success:
-                            function successCBgetEventsFromDB(doc) {
-                                doc = $.parseJSON(doc.d);
-                                alert(doc);
-                                $('#calendar').fullCalendar('refetchEvents');
-                            }
-                    });
-                }
+            });
+        }
+        else {
+            revertFunc();
+        }
+    });
+
+
+                //if (!confirm("להזיז את חוג " + event.title + " לתאריך " + startTimeAndDate[0] + " שיתחיל בשעה " + startTimeAndDate[1] + " ויסתיים בשעה " + endTimeAndDate[1] + "?")) {
+                //    revertFunc();
+                //}
+                //else {
+
+                //}
             },
-//----------------------------------------------------------Edit exisiting event code --------------------------------------------------------------
+            //----------------------------------------------------------Edit exisiting event code --------------------------------------------------------------
             eventClick: function (calEvent, jsEvent, view) {
 
                 //$("#myModalEditEvent").on('hidden.bs.modal', function ()
@@ -158,7 +207,7 @@
                                     .attr("value", '').text('עריכת שם חוג'));
                             $.each(result, function (value, key) {
                                 $ddl.append($('<option + value = "' + key.ClassID + '" > ' + key.ClassName + ' </option>'));
-                                $('select option:contains('+ onlyClassNameToShowOnDDL +')').prop('selected', true);
+                                $('select option:contains(' + onlyClassNameToShowOnDDL + ')').prop('selected', true);
                             });
                         }
                 });
@@ -210,7 +259,9 @@
                 $('#EditEventHeader').text(" עריכת חוג " + calEvent.title + " בתאריך " + eventStartTimeAndDateObj[0] + " המתחיל בשעה " + eventStartTimeAndDateObj[1]);
                 // $("#deleteEventfromEditModal").click(function () {
                 $("#deleteEventfromEditModal").unbind("click").click(function () {
-                    if (!confirm("?בטוח לגבי מחיקת אירוע זה")) {
+
+                    if (!confirm("?בטוח לגבי מחיקת אירוע זה"))
+                    {
                         return false;
                     }
                     else {
@@ -235,12 +286,14 @@
                             success:
                                 function successCBdeleteEventFromDB(doc) {
                                     doc = $.parseJSON(doc.d);
-                                    alert(doc);
+                                    //alert(doc);
+                                    swal(doc, "", "success");
                                     $('#calendar').fullCalendar('refetchEvents');
                                 },
                         })
                     };
                 });
+
                 $("#AddEventAfetEditing").unbind("click").click(function () {
 
                     var classID = calEvent.id;
@@ -255,28 +308,22 @@
 
                     var NeedToSendEmail = "";
                     var WhatHasChanged = [];
-                    if (classNameText != classNameInitial || guideNameText != guideNameInitial || classStartTime != eventStartTimeInitial || classEndTime != eventEndTimeInitial)
-                    {
+                    if (classNameText != classNameInitial || guideNameText != guideNameInitial || classStartTime != eventStartTimeInitial || classEndTime != eventEndTimeInitial) {
                         NeedToSendEmail = "Yes";
-                        if (classNameText != classNameInitial)
-                        {
+                        if (classNameText != classNameInitial) {
                             WhatHasChanged.push("className");
                         }
-                        if (guideNameText != guideNameInitial)
-                        {
+                        if (guideNameText != guideNameInitial) {
                             WhatHasChanged.push("guideName");
                         }
-                        if (classStartTime != eventStartTimeInitial)
-                        {
+                        if (classStartTime != eventStartTimeInitial) {
                             WhatHasChanged.push("classStartTime");
                         }
-                        if (classEndTime != eventEndTimeInitial)
-                        {
+                        if (classEndTime != eventEndTimeInitial) {
                             WhatHasChanged.push("classEndTime");
                         }
                     }
-                    else
-                    {
+                    else {
                         NeedToSendEmail = "No";
                     }
 
@@ -286,18 +333,15 @@
                     var endt = new Date("November 13, 2013 " + classEndTime);  // create a datetime stamp that will allow to validate more easily...
                     endt = endt.getTime();
 
-                    if ($("#ClassesDDLEdit option:selected").text().trim() == "עריכת שם חוג")
-                    {
+                    if ($("#ClassesDDLEdit option:selected").text().trim() == "עריכת שם חוג") {
                         alert("בחירת חוג לא חוקית");
                         return false;
                     }
-                    else if ($("#GuidesDDLEdit option:selected").text().trim() == "עריכת שם מדריך")
-                    {
+                    else if ($("#GuidesDDLEdit option:selected").text().trim() == "עריכת שם מדריך") {
                         alert("בחירת מדריך לא חוקית");
                         return false;
                     }
-                    else if ((stt > endt) || (classStartTime == "") || (classEndTime == "") || (classStartTime == classEndTime))
-                    {
+                    else if ((stt > endt) || (classStartTime == "") || (classEndTime == "") || (classStartTime == classEndTime)) {
                         alert("בחירת זמן לא חוקית");
                         return false;
                     }
@@ -306,22 +350,20 @@
                         alert("בחירת מקסימום משתתפים לא חוקית");
                         return false;
                     }
-                    else if (!confirm("?בטוח לגבי עידכון אירוע זה"))
-                    {
+                    else if (!confirm("?בטוח לגבי עידכון אירוע זה")) {
                         return false;
                     }
                     else {
 
-                            var whatHasChangedParsed = "";
+                        var whatHasChangedParsed = "";
 
-                            for (var i = 0; i < WhatHasChanged.length; i++)
+                        for (var i = 0; i < WhatHasChanged.length; i++) {
+                            whatHasChangedParsed += WhatHasChanged[i] + ";";
+                        }
+                        var whatHasChangedParsed = whatHasChangedParsed.substring(0, whatHasChangedParsed.length - 1);
+
+                        var updateRequest =
                             {
-                                whatHasChangedParsed += WhatHasChanged[i] + ";";
-                            }
-                            var whatHasChangedParsed = whatHasChangedParsed.substring(0, whatHasChangedParsed.length - 1);
-
-                            var updateRequest =
-                                {
                                 classID: classID,
                                 className: className,
                                 guideID: guideID,
@@ -337,7 +379,7 @@
                                 eventEndTimeInitial: eventEndTimeInitial,
                                 whatHasChangedParsed: whatHasChangedParsed,
                                 eventDate: eventDate
-                                };
+                            };
 
                         var dataString = JSON.stringify(updateRequest); // parsing the request above. 
                         $.ajax({
@@ -349,14 +391,15 @@
                             success:
                                 function successCBupdateEventInDB(doc) {
                                     doc = $.parseJSON(doc.d);
-                                    alert(doc);
+                                    //alert(doc);
+                                    swal(doc, "", "success");
                                     $('#calendar').fullCalendar('refetchEvents');
                                 },
                         })
                     };
                 });
             }
-//----------------------------------------------------------------------End of edit exisiting event code -----------------------------------------------------------
+            //----------------------------------------------------------------------End of edit exisiting event code -----------------------------------------------------------
         });
     }
     renderCalendar();
@@ -426,7 +469,7 @@ $(document).ready(function () {
 
     $("#AddEvent").click(function () {
 
-        var pattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/; 
+        var pattern = /^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/;
         var isRecurring = "No" // will used later
         var classID = $("#ClassesDDL option:selected").val();
         //     var className = $("#ClassesDDL option:selected").text().trim(); //trim for delete the space that created --> --> didn't used that because in the db the id of the class is matter, not the name
@@ -444,33 +487,33 @@ $(document).ready(function () {
         var endt = new Date("November 13, 2013 " + classEndTime);  // create a datetime stamp that will allow to validate more easily...
         endt = endt.getTime();
 
-        if ($("#ClassesDDL option:selected").text().trim() == "שם חוג")
-        {
-            alert("בחירת חוג לא חוקית");
+        if ($("#ClassesDDL option:selected").text().trim() == "שם חוג") {
+            //alert("בחירת חוג לא חוקית");
+            swal("שגיאה!", "בחירת חוג לא חוקית");
             return false;
         }
-        else if ((!pattern.test($('#classDate').val())) || ($('#classDate').val() == ""))
-        {
-            alert("בחירת תאריך לא חוקית");
+        else if ((!pattern.test($('#classDate').val())) || ($('#classDate').val() == "")) {
+            //alert("בחירת תאריך לא חוקית");
+            swal("שגיאה!", "בחירת תאריך לא חוקית");
             return false;
         }
-        else if ((stt > endt) || (classStartTime == "") || (classEndTime == "") || (classStartTime == classEndTime))
-        {
-            alert("בחירת זמן לא חוקית");
+        else if ((stt > endt) || (classStartTime == "") || (classEndTime == "") || (classStartTime == classEndTime)) {
+            //alert("בחירת זמן לא חוקית");
+            swal("שגיאה!", "בחירת זמן לא חוקית");
             return false;
         }
-        else if ($("#GuidesDDL option:selected").text().trim() == "שם מדריך")
-        {
-            alert("בחירת מדריך לא חוקית");
+        else if ($("#GuidesDDL option:selected").text().trim() == "שם מדריך") {
+            //alert("בחירת מדריך לא חוקית");
+            swal("שגיאה!", "בחירת מדריך לא חוקית");
             return false;
         }
         else if (isNaN(MaximumUsersPerClass) || MaximumUsersPerClass < 1) // check if the max participates is a number 
         {
-            alert("בחירת מקסימום משתתפים לא חוקית");
+            //alert("בחירת מקסימום משתתפים לא חוקית");
+            swal("שגיאה!", "בחירת מקסימום משתתפים לא חוקית");
             return false;
         }
-        else if ($('input.RecurringEventCheckbox').is(':checked'))
-        {
+        else if ($('input.RecurringEventCheckbox').is(':checked')) {
             isRecurring = "Yes";
         }
 
@@ -494,7 +537,7 @@ $(document).ready(function () {
             success:
                 function successCBcreateNewEventInDB(doc) {
                     doc = $.parseJSON(doc.d);
-                    alert(doc);
+                    swal(doc, "", "success");
                     $('#calendar').fullCalendar('refetchEvents');
                     $('#classDate').val('');
                     $('#classStartTime').val('');
@@ -518,8 +561,9 @@ $(document).ready(function () {
 
         var className = $('#AddNewClassTxtbox').val();
 
-        if (className ==  "") {
-            alert("אנא ציין את שם החוג שברצונך להוסיף");
+        if (className == "") {
+           // alert("אנא ציין את שם החוג שברצונך להוסיף");
+            swal("אנא ציין את שם החוג שברצונך להוסיף");
         }
         else {
             var createNewClassRequset = {
@@ -536,7 +580,7 @@ $(document).ready(function () {
                 success:
                     function successCBcreateNewClassInDB(doc) {
                         doc = $.parseJSON(doc.d);
-                        alert(doc);
+                        swal(doc, "", "success");
                     },
             });
         }
@@ -570,11 +614,12 @@ $(document).ready(function () {
         var ClassToDelete = $("#ClassDDLDelete option:selected").text();
         var ClassToDeleteID = $("#ClassDDLDelete option:selected").val();
         if (ClassToDelete == "שם חוג") {
-            alert("בחירת חוג למחיקה לא חוקית");
-            return 0;
+            //alert("בחירת חוג למחיקה לא חוקית");
+            swal("בחירת חוג למחיקה לא חוקית");
+            return false;
         }
         else if (!confirm("?בטוח לגבי מחיקת חוג זה")) {
-            return 0;
+            return false;
         }
         else {
             var deleteRequest = {
@@ -590,13 +635,13 @@ $(document).ready(function () {
                 success:
                     function successCBDeleteClassFromDB(doc) {
                         doc = $.parseJSON(doc.d);
-                        alert(doc);
+                        swal("",doc);
                     }
             });
 
         }
     });
-    
+
 });
 //-----------------------------------------------------------------------------------------------------------------------------------
 
@@ -609,7 +654,9 @@ $(document).ready(function () {
 
         var guideName = $('#AddNewGuideTxtbox').val();
         if (guideName == "") {
-            alert("אנא ציין את שם המדריך שברצונך להוסיף");
+            //alert("אנא ציין את שם המדריך שברצונך להוסיף");
+            swal("אנא ציין את שם המדריך שברצונך להוסיף");
+
         }
         else {
             var createNewGuideRequset = {
@@ -626,7 +673,7 @@ $(document).ready(function () {
                 success:
                     function successCBcreateNewGuideInDB(doc) {
                         doc = $.parseJSON(doc.d);
-                        alert(doc);
+                        swal(doc, "", "success");
                     },
             });
         }
@@ -660,11 +707,12 @@ $(document).ready(function () {
         var guideToDelete = $("#GuidesDDLDelete option:selected").text().trim();
         var guideToDeleteID = $("#GuidesDDLDelete option:selected").val();
         if (guideToDelete == "שם מדריך") {
-            alert("בחירת מדריך למחיקה לא חוקית");
-            return 0;
+            //alert("בחירת מדריך למחיקה לא חוקית");
+            swal("בחירת מדריך למחיקה לא חוקית");
+            return false;
         }
         else if (!confirm("?בטוח לגבי מחיקת מדריך זה")) {
-            return 0;
+            return false;
         }
         else {
             var deleteRequest = {
@@ -680,7 +728,7 @@ $(document).ready(function () {
                 success:
                     function successCBDeleteGuideFromDB(doc) {
                         doc = $.parseJSON(doc.d);
-                        alert(doc);
+                        swal("", doc);
                     },
                 error: function errorCBDeleteGuideFromDB(e) {
                     alert("something went wrong... :) " + e.responseText)

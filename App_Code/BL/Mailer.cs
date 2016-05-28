@@ -15,16 +15,16 @@ using System.Net.Mail;
 /// </summary>
 public class Mailer
 {
-	public Mailer()
-	{
-		//
-		// TODO: Add constructor logic here
-		//
-	}
+    public Mailer()
+    {
+        //
+        // TODO: Add constructor logic here
+        //
+    }
 
     //----------------------------------------------------ResizeMailer---------------------------------------------------
 
-    public void getMailDataForEventResize(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime) 
+    public void getMailDataForEventResize(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string oldEndTime)
     {
 
         string emailSubject = "פורמה-פיט - שינוי שעת חוג " + className + " בתאריך " + Date;
@@ -35,7 +35,7 @@ public class Mailer
             if (recepientEmail != null && recepientEmail != "")
             {
                 string builedEmailBody = PopulateBodyForEventResize(recepientName, className, guideName, Date, startTime, endTime, oldEndTime);
-                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody); 
+                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
             }
         }
     }
@@ -47,7 +47,7 @@ public class Mailer
         //{
         //    body = reader.ReadToEnd();
         //}
-    //    StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_change_temp.html"));
+        //    StreamReader reader = new StreamReader(System.Web.HttpContext.Current.Server.MapPath("~/email template/forma_email_change_temp.html"));
         string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_change_resize_temp.html");
         StreamReader reader = new StreamReader(path);
         body = reader.ReadToEnd();
@@ -68,7 +68,7 @@ public class Mailer
 
     //----------------------------------------------------DraggingMailer---------------------------------------------------
 
-    public void getMailDataForEventDragging(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string OldDate) 
+    public void getMailDataForEventDragging(DBServices RegisteredUsersTBL, string className, string guideName, string Date, string startTime, string endTime, string OldDate)
     {
 
         string emailSubject = "פורמה-פיט - שינוי מועד חוג " + className + " בתאריך " + Date;
@@ -79,7 +79,7 @@ public class Mailer
             if (recepientEmail != null && recepientEmail != "")
             {
                 string builedEmailBody = PopulateBodyForEventDragging(recepientName, className, guideName, Date, startTime, endTime, OldDate);
-                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody); 
+                SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
             }
         }
     }
@@ -313,13 +313,42 @@ public class Mailer
 
     //----------------------------------------------------end of New User Mailer---------------------------------------------------
 
+    //----------------------------------------------------Credentials Mailer---------------------------------------------------
+
+    public string SendEmailWithCredentials(string UserName, string FirstName, string userPassword, string emailAddress)
+    {
+        string emailSubject = "פרטי כניסה לאפליקציית פורמה-פיט";
+        string recepientEmail = emailAddress;
+        string recepientName = FirstName;
+        string builedEmailBody = PopulateBodyForExistingUserEmail(recepientName, UserName, userPassword);
+        SendHtmlFormattedEmail(recepientEmail, emailSubject, builedEmailBody);
+        return "נשלח בהצלחה";
+    }
+
+
+
+    private string PopulateBodyForExistingUserEmail(string FirstName, string UserName, string Password)
+    {
+        string body = string.Empty;
+        string path = Path.Combine(HttpRuntime.AppDomainAppPath, "email template/forma_email_template.html");
+        StreamReader reader = new StreamReader(path);
+        body = reader.ReadToEnd();
+        body = body.Replace("{FirstName}", FirstName);
+        body = body.Replace("{UserName}", UserName);
+        body = body.Replace("{Password}", Password);
+        return body;
+    }
+
+
+    //----------------------------------------------------end of Credentials Mailer---------------------------------------------------
 
     //----------------------------------------------------Mailer Function---------------------------------------------------
-    
+
     public void SendHtmlFormattedEmail(string recepientEmail, string subject, string body)
     {
-        using (MailMessage mailMessage = new MailMessage())
+        try
         {
+            MailMessage mailMessage = new MailMessage();
             mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["UserName"], "פורמה-קלאב");
             mailMessage.Subject = subject;
             mailMessage.Body = body;
@@ -335,8 +364,39 @@ public class Mailer
             smtp.Credentials = NetworkCred;
             smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
             smtp.Send(mailMessage);
+
+        }
+        catch (Exception ex)
+        {
+            //string msg = "Mail cannot be sent because of the server problem:";
+            //msg += ex.Message;
+            Console.WriteLine(ex.Message);
+            throw ex;
         }
     }
+
+
+    //public void SendHtmlFormattedEmail(string recepientEmail, string subject, string body)
+    //{
+    //    using (MailMessage mailMessage = new MailMessage())
+    //    {
+    //        mailMessage.From = new MailAddress(ConfigurationManager.AppSettings["UserName"], "פורמה-קלאב");
+    //        mailMessage.Subject = subject;
+    //        mailMessage.Body = body;
+    //        mailMessage.IsBodyHtml = true;
+    //        mailMessage.To.Add(new MailAddress(recepientEmail));
+    //        SmtpClient smtp = new SmtpClient();
+    //        smtp.Host = ConfigurationManager.AppSettings["Host"];
+    //        smtp.EnableSsl = Convert.ToBoolean(ConfigurationManager.AppSettings["EnableSsl"]);
+    //        System.Net.NetworkCredential NetworkCred = new System.Net.NetworkCredential();
+    //        NetworkCred.UserName = ConfigurationManager.AppSettings["UserName"];
+    //        NetworkCred.Password = ConfigurationManager.AppSettings["Password"];
+    //        smtp.UseDefaultCredentials = true;
+    //        smtp.Credentials = NetworkCred;
+    //        smtp.Port = int.Parse(ConfigurationManager.AppSettings["Port"]);
+    //        smtp.Send(mailMessage);
+    //    }
+    //}
 }
 
 //--------------------------------------------------------------------------------------------------------------------------
