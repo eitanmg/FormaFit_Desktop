@@ -70,7 +70,7 @@ AmCharts.ready(function () {
     chart.marginBottom = 0;
     chart.marginTop = 0;
     chart.fontSize = 15;
-    chart.addTitle("חוגים נבחרים לחודש מאי");
+    chart.addTitle("חוגים נבחרים לחודש אפריל");
     var categoryAxis = chart.categoryAxis;
     categoryAxis.inside = true;
     categoryAxis.axisAlpha = 0;

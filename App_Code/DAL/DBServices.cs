@@ -935,7 +935,7 @@ public class DBServices
         }
     }
 
-    public string addNewUserInDB(string conString, string tableName, string FirstName, string LastName, string userSex, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
+    public string addNewUserInDB(string conString, string tableName, string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
     {
 
         DBServices dbS = new DBServices();
@@ -944,7 +944,7 @@ public class DBServices
         try
         {
             con = dbS.connect(conString);
-            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress], [Sex], [mailNotification]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "'" + "," + "'" + userSex + "'" + "," + "'" + EmailNotification + "')";
+            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress], [mailNotification]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "," + "'" + EmailNotification + "')";
             SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con); // create the data adapter
             DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
             da.Fill(ds); // Fill the datatable (in the dataset), using the Select command
@@ -963,33 +963,23 @@ public class DBServices
         }
     }
 
-    public string updateExistingUserInDB(string conString, string tableName, string updateStr, string _userName)
+    public string updateExistingUserInDB(string conString, string tableName, string newVal, string col, string id, string currentVal)
     {
 
-        DBServices dbS = new DBServices();
+        DBServices dbS = new DBServices(); // create a helper class
         SqlConnection con = null;
+
         try
         {
-            string[] ValuesSplitByComma = updateStr.Split(',');
-            string SQLstr = updateStr.Replace(':', '=');
-            SQLstr = SQLstr.TrimEnd(',');
+            con = dbS.connect(conString); // open the connection to the database
 
-            //string SQLrows = "";
-            //string SQLvalus = "";
 
-            //for (int i = 0; i < ValuesSplitByComma.Length; i++)
-            //{
-            //    SQLrows += ValuesSplitByComma[i].Split(':')[0] + ",";
-            //    SQLvalus += ValuesSplitByComma[i].Split(':')[1] + ",";
-            //}
-            //SQLrows = SQLrows.Remove(SQLrows.Length - 1);
-            //SQLvalus = SQLvalus.Remove(SQLvalus.Length - 1);
+            String UpdateStr = "UPDATE " + tableName + " SET content = " + "'" + newVal + "'" + " WHERE [id] = " + id;
+            // create the select that will be used by the adapter to select data from the DB
+            SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con); // create the data adapter
 
-            con = dbS.connect(conString);
-            String UpdateStr = "UPDATE " + tableName + " SET " + SQLstr + " WHERE [UserName] = " + _userName;
-            SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
+            DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
+            da.Fill(ds); // Fill the datatable (in the dataset), using the Select command
             return "האירוע עודכן בהצלחה";
         }
         catch (Exception ex)
@@ -1006,21 +996,28 @@ public class DBServices
         }
     }
 
-    public string DeleteUserFromDB(string conString, string tableName, string UserName)
+    public string DeleteUserFromDB(string conString, string tableName, string values)
     {
-        DBServices dbS = new DBServices();
+
+        DBServices dbS = new DBServices(); // create a helper class
         SqlConnection con = null;
+
         try
         {
-            con = dbS.connect(conString);
-            String UpdateStr = "UPDATE " + tableName + " SET [Status] = 'לא פעיל'" + " WHERE [UserName] = " + UserName;
-            SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con);
-            DataSet ds = new DataSet();
-            da.Fill(ds);
+            con = dbS.connect(conString); // open the connection to the database
+
+            String InsertStr = "DELETE FROM " + tableName + " WHERE UserName = " + values + "";
+            //DELETE FROM FormaUsers WHERE UserName = 1;
+            SqlDataAdapter da = new SqlDataAdapter(InsertStr, con); // create the data adapter
+
+            DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
+            da.Fill(ds); // Fill the datatable (in the dataset), using the Select command
+
             return "נמחק בהצלחה";
         }
         catch (Exception ex)
         {
+            // write to log
             throw ex;
         }
         finally

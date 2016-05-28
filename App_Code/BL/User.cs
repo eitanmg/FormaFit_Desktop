@@ -87,10 +87,10 @@ public class User
         return dbs.dt;
     }
 
-    public string addNewUserInDB(string FirstName, string LastName, string UserName, string userSex, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
+    public string addNewUserInDB(string FirstName, string LastName, string UserName, string Password, string UserType, string UserStatus, string DOB, string BeginDate, string EndDate, string Mobile, string Email, string EmailNotification)
     {
         DBServices dbs = new DBServices();
-        string answer = dbs.addNewUserInDB("FormaFitConnectionString", "FormaUsers", FirstName, LastName, userSex, UserName, Password, UserType, UserStatus, DOB, BeginDate, EndDate, Mobile, Email, EmailNotification);
+        string answer = dbs.addNewUserInDB("FormaFitConnectionString", "FormaUsers", FirstName, LastName, UserName, Password, UserType, UserStatus, DOB, BeginDate, EndDate, Mobile, Email, EmailNotification);
         Task myTask = Task.Factory.StartNew(() => AsyncUpdateUserInDB(Email,FirstName, UserName, Password));
         return answer;
     }
@@ -101,17 +101,17 @@ public class User
         mailer.getMailDataForNewUserEmail(Email, FirstName, UserName, Password);
     }
 
-    public string updateExistingUserInDB(string updateStr, string _userName)
+    public string updateExistingUserInDB(string newVal, string col, string id, string currentVal)
     {
         DBServices dbs = new DBServices();
-        string answer = dbs.updateExistingUserInDB("FormaFitConnectionString", "FormaUsers", updateStr, _userName);
+        string answer = dbs.updateExistingUserInDB("FormaFitConnectionString", "FormaUsers", newVal, col, id, currentVal);
         return answer;
     }
 
-    public string DeleteUserFromDB(string UserName)
+    public string DeleteUserFromDB(string values)
     {
         DBServices dbs = new DBServices();
-        string answer = dbs.DeleteUserFromDB("FormaFitConnectionString", "FormaUsers", UserName);
+        string answer = dbs.DeleteUserFromDB("FormaFitConnectionString", "FormaUsers", values);
         return answer;
     }
 
