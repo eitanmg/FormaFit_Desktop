@@ -31,11 +31,6 @@ public class User
     {
         DBServices dbs = new DBServices();
         dbs = dbs.ReadUserFromDataBase("FormaFitConnectionString", "[formausers]", userType, Password);
-        // save the dataset in a session object
-        if (HttpContext.Current != null && HttpContext.Current.Session != null && HttpContext.Current.Session["UserDataSet"] != null)
-        {
-            HttpContext.Current.Session["UserDataSet"] = dbs;
-        }
         return dbs.dt;
     }
 
@@ -77,7 +72,7 @@ public class User
         }
         return "לקוח";
     }
-
+    
     public DataTable getCurrentUsersFromDB()
     {
         DBServices dbs = new DBServices();

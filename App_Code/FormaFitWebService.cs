@@ -24,7 +24,8 @@ public class FormaFitWebService : System.Web.Services.WebService
         //InitializeComponent(); 
     }
 
-    [WebMethod]
+    
+    [WebMethod(EnableSession = true)]
     [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
     //--------------------------------------------------------------------------
     // Method must be public
@@ -37,6 +38,15 @@ public class FormaFitWebService : System.Web.Services.WebService
         User user = new User();
         JavaScriptSerializer js = new JavaScriptSerializer();
         string res = user.checkUser(name, password);
+
+        string Option1 = "שם משתמש או ססמה אינם נכונים";
+        string Option2 = "המשתמש לא פעיל";
+
+        if (res != Option1 && res != Option2)
+        {
+            Session["LoggedInUser"] = true;
+        }
+
         string jsonString = js.Serialize(res);
         return jsonString;
     }

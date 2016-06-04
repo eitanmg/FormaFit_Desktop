@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Admin-Main.aspx.cs" Inherits="Admin_Main" %>
+
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -42,11 +44,11 @@
 				<div class="12u-first">
 					<header id="header">
 						<nav>
-							<a href="Admin-Main.html" class="current-page-item">דף בית</a>
-							<a href="userManagment-html.html">ניהול משתמשים</a>
-							<a href="classManagment-Main.html">ניהול חוגים</a>
-                            <a href="ProgramManagment-Main.html">ניהול יעדים</a>
-							<a href="notificationManagment.html" >הודעות ושינויים</a>
+							<a href="Admin-Main.aspx" class="current-page-item">דף בית</a>
+							<a href="userManagment-html.aspx">ניהול משתמשים</a>
+							<a href="classManagment-Main.aspx">ניהול חוגים</a>
+                            <a href="ProgramManagment-Main.aspx">ניהול יעדים</a>
+							<a href="notificationManagment.aspx" >הודעות ושינויים</a>
 						</nav>
 					</header>
 				</div>

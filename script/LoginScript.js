@@ -62,7 +62,7 @@ function successCB(resutls) {
     }
     else if (myarray[0] == "מנהל")
     {
-        window.location.href = 'Admin-Main.html';
+        window.location.href = 'Admin-Main.aspx';
     }
     else
     {
