@@ -944,10 +944,23 @@ public class DBServices
         try
         {
             con = dbS.connect(conString);
-            String UpdateStr = "INSERT INTO " + tableName + "([FirstName], [LastName], [UserName], [Password], [UserType], [Status], [DOB], [DateOfStart], [DateOfFinish], [PhoneNumber], [EmailAaddress], [Sex], [mailNotification]) VALUES ('" + FirstName + "'" + "," + "'" + LastName + "'" + "," + "'" + UserName + "'" + "," + "'" + Password + "'" + "," + "'" + UserType + "'" + "," + "'" + UserStatus + "'" + "," + "'" + DOB + "'" + "," + "'" + BeginDate + "'" + "," + "'" + EndDate + "'" + "," + "'" + Mobile + "'" + "," + "'" + Email + "'" + "," + "'" + userSex + "'" + "," + "'" + EmailNotification + "')";
-            SqlDataAdapter da = new SqlDataAdapter(UpdateStr, con); // create the data adapter
-            DataSet ds = new DataSet(); // create a DataSet and give it a name (not mandatory) as defualt it will be the same name as the DB
-            da.Fill(ds); // Fill the datatable (in the dataset), using the Select command
+            SqlCommand cmd = new SqlCommand("spAddNewUserInDB", con);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@FirstName", SqlDbType.NVarChar, 100).Value = FirstName;
+            cmd.Parameters.Add("@LastName", SqlDbType.NVarChar, 100).Value = LastName;
+            cmd.Parameters.Add("@UserName", SqlDbType.NVarChar, 100).Value = UserName;
+            cmd.Parameters.Add("@Password", SqlDbType.NVarChar, 100).Value = Password;
+            cmd.Parameters.Add("@UserType", SqlDbType.NVarChar, 100).Value = UserType;
+            cmd.Parameters.Add("@Status", SqlDbType.NVarChar, 100).Value = UserStatus;
+            cmd.Parameters.Add("@DOB", SqlDbType.Date).Value = DOB;
+            cmd.Parameters.Add("@DateOfStart", SqlDbType.Date).Value = BeginDate;
+            cmd.Parameters.Add("@DateOfFinish", SqlDbType.Date).Value = EndDate;
+            cmd.Parameters.Add("@PhoneNumber", SqlDbType.NVarChar, 100).Value = Mobile;
+            cmd.Parameters.Add("@EmailAaddress", SqlDbType.NVarChar, 320).Value = Email;
+            cmd.Parameters.Add("@Sex", SqlDbType.NVarChar, 10).Value = userSex;
+            cmd.Parameters.Add("@mailNotification", SqlDbType.NVarChar, 10).Value = EmailNotification;
+            SqlDataReader reader = cmd.ExecuteReader();
             return "המשתמש נוסף בהצלחה";
         }
         catch (Exception ex)
