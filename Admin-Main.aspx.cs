@@ -9,9 +9,9 @@ public partial class Admin_Main : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        //if (Session.Count == 0)
-        //{
-        //    Response.Redirect("Login.aspx");
-        //}
+        if (Session.Count == 0)
+        {
+            Response.Redirect("Login.aspx");
+        }
     }
 }
